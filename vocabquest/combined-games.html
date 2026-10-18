@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Pixel Vocab Quest - Semua Stage</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts for Retro Pixel Aesthetic + game fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=Quicksand:wght@500;600;700&family=Fredoka:wght@500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ----------------------------
+       COMBINED GLOBAL STYLES
+       ---------------------------- */
+    * { box-sizing: border-box; margin:0; padding:0; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
+    html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:'Silkscreen',cursive,sans-serif;background:#1a102f;color:#fff}
+    .pixel-font-title{font-family:'Press Start 2P',cursive}
+    .pixel-art,svg,canvas{image-rendering:pixelated; image-rendering:-moz-crisp-edges; image-rendering:crisp-edges;}
+    .crt-overlay::before{content:" ";display:block;position:absolute;top:0;left:0;bottom:0;right:0;background:linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));z-index:40;background-size:100% 4px,6px 100%;pointer-events:none;opacity:0.6}
+    .pixel-box{background:#231942;border:4px solid #000;box-shadow: inset -4px -4px 0px 0px #140d28, inset 4px 4px 0px #5e43a5, 0px 8px 0px 0px rgba(0,0,0,0.5);position:relative}
+    .pixel-box-gold{background:#3a2e12;border:4px solid #000;box-shadow: inset -4px -4px 0px 0px #1e1605, inset 4px 4px 0px 0px #f5c042, 0px 6px 0px 0px rgba(0,0,0,0.4)}
+    .pixel-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;font-family:'Press Start 2P',cursive;font-size:12px;text-transform:uppercase;color:#fff;background-color:#2b82c5;border:3px solid #000;box-shadow: inset -4px -4px 0px #15456b, inset 4px 4px 0px #63b3ed, 0 5px 0 #000;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+    .pixel-btn:active{transform:translateY(4px);box-shadow: inset -4px -4px 0px #15456b, inset 4px 4px 0px #63b3ed, 0 1px 0 #000}
+    .pixel-text-shadow{text-shadow:3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000}
+    .gold-glow{text-shadow:0 0 10px #ffea79,3px 3px 0 #000}
+    .floating-bubble{animation:float-vocab 4s ease-in-out infinite}
+    @keyframes float-vocab{0%,100%{transform:translateY(0px) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+    .pixel-leaf{position:absolute;pointer-events:none;animation:leaf-fall linear infinite}
+    @keyframes leaf-fall{0%{transform:translate(0,-10vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translate(180px,105vh) rotate(720deg);opacity:0}}
+
+    /* ----------------------------
+       LANDING-SPECIFIC LAYOUT
+       ---------------------------- */
+    #scene-container{position:absolute;inset:0;overflow:hidden;background:linear-gradient(to bottom,#4a8bad,#78b7d0,#eac086)}
+    #vocab-bubbles-container .pixel-box{border-radius:0}
+    .overlay-hidden{display:none}
+
+    /* ----------------------------
+       GAME CONTAINERS & MODALS ISOLATION
+       ---------------------------- */
+    .hidden { display: none !important; }
+    .hidden-screen { display: none !important; }
+
+    #g1-container.hidden,
+    #g2-container.hidden,
+    #g3-container.hidden,
+    #landing-screen.hidden {
+      display: none !important;
+    }
+
+    #g1-container:not(.hidden),
+    #g2-container:not(.hidden),
+    #g3-container:not(.hidden) {
+      display: flex !important;
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 50 !important;
+    }
+
+    #g1-container { background: rgba(26, 16, 47, 0.96); backdrop-filter: blur(8px); }
+    #g2-container { background: rgba(26, 16, 47, 0.96); backdrop-filter: blur(8px); }
+    #g3-container { background: rgba(7, 4, 20, 0.98); backdrop-filter: blur(12px); }
+
+    #modal-vocab, #modal-unavailable, #modal-help {
+      z-index: 100 !important;
+    }
+
+    /* ----------------------------
+       GAME (G1 & G2) SHARED STYLES 
+       ---------------------------- */
+    .glass-card{background:rgba(255,255,255,.9);border:2px solid rgba(255,255,255,.85);box-shadow:0 22px 55px rgba(69,83,158,.2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+    .screen{width:100%;animation:appear .5s ease both}
+    .title-font{font-family:"Fredoka",sans-serif}
+    .floating{animation:float 3.2s ease-in-out infinite}
+    .sparkle{animation:sparkle 1.6s ease-in-out infinite alternate}
+    @keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pop{from{opacity:0;transform:scale(.78)}to{opacity:1;transform:scale(1)}}
+    @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+    @keyframes sparkle{from{transform:scale(.8) rotate(-8deg)}to{transform:scale(1.13) rotate(8deg)}}
+
+    /* Answer button common */
+    .answer-button{width:100%;padding:14px 18px;text-align:left;border:2px solid rgba(88,101,216,.12);background:white;color:#26345e;box-shadow:0 4px 0 rgba(88,101,216,.1);border-radius:12px;cursor:pointer}
+    .answer-button:disabled{opacity:.7;cursor:default;transform:none}
+    .answer-letter{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#e8ebff;color:#5865d8;margin-right:10px;font-weight:bold}
+
+    @media (max-width:640px){
+      body{font-size:14px}
+    }
+
+    .app-wrapper{position:relative;z-index:20;width:100%;height:100%;display:flex;flex-direction:column;justify-between;padding:12px;overflow:auto}
+
+    /* -----------------------------------------------
+       STAGE 3 CYBERPUNK CITY STYLES (NEW AI THEME)
+       ----------------------------------------------- */
+    .cyber-font-tech{font-family:'Orbitron','Share Tech Mono',monospace,sans-serif}
+    .cyber-font-mono{font-family:'Share Tech Mono',monospace}
+    .cyber-card{
+      background:rgba(9, 7, 26, 0.94);
+      border:2px solid #00f0ff;
+      box-shadow:0 0 25px rgba(0,240,255,0.25), inset 0 0 20px rgba(255,0,127,0.15), 0 12px 35px rgba(0,0,0,0.8);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      position:relative;
+      overflow:hidden;
+    }
+    .cyber-card::before{
+      content:"";
+      position:absolute;
+      top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg, transparent, #00f0ff, #ff007f, transparent);
+      animation:cyber-scan 3s linear infinite;
+    }
+    @keyframes cyber-scan{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+    .cyber-neon-text-cyan{text-shadow:0 0 8px #00f0ff, 0 0 18px rgba(0,240,255,0.6)}
+    .cyber-neon-text-pink{text-shadow:0 0 8px #ff007f, 0 0 18px rgba(255,0,127,0.6)}
+    
+    .cyber-answer-button{
+      width:100%;
+      padding:14px 18px;
+      text-align:left;
+      border:2px solid rgba(0,240,255,0.35);
+      background:rgba(18, 12, 43, 0.85);
+      color:#e0f2fe;
+      box-shadow:0 4px 0 rgba(0,240,255,0.25), inset 0 0 10px rgba(0,240,255,0.05);
+      border-radius:12px;
+      transition:all .12s ease;
+      cursor:pointer;
+    }
+    .cyber-answer-button:hover:not(:disabled){
+      border-color:#ff007f;
+      background:rgba(255,0,127,0.18);
+      box-shadow:0 0 15px rgba(255,0,127,0.4), 0 4px 0 #ff007f;
+      transform:translateY(-2px);
+    }
+    .cyber-answer-button:disabled{opacity:.7;cursor:default;transform:none}
+    .cyber-answer-letter{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:30px;
+      height:30px;
+      border-radius:8px;
+      background:rgba(0,240,255,0.18);
+      color:#00f0ff;
+      border:1px solid #00f0ff;
+      margin-right:10px;
+      font-weight:bold;
+      font-family:'Press Start 2P',cursive;
+      font-size:10px;
+    }
+    .cyber-grid-bg{
+      background-color:#070414;
+      background-image:linear-gradient(rgba(0,240,255,0.07) 1px, transparent 1px),
+                       linear-gradient(90deg, rgba(0,240,255,0.07) 1px, transparent 1px);
+      background-size:24px 24px;
+    }
+    .glitch-badge{
+      display:inline-block;
+      position:relative;
+      animation:glitch-anim 2.5s infinite;
+    }
+    @keyframes glitch-anim{
+      0%,92%,100%{transform:translate(0)}
+      93%{transform:translate(-2px,1px)}
+      95%{transform:translate(2px,-1px)}
+      97%{transform:translate(-1px,-2px)}
+    }
+  </style>
+</head>
+<body class="crt-overlay relative w-full h-full overflow-hidden select-none">
+
+  <!-- =======================================================
+       BACKGROUND SCENE (PARALLAX PIXEL PARK)
+       ======================================================= -->
+  <div id="scene-container" class="absolute inset-0 w-full h-full overflow-hidden pixel-art">
+    <div class="absolute top-[15%] left-1/2 -translate-x-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-full bg-yellow-200/30 blur-2xl pointer-events-none"></div>
+    <div class="absolute top-[12%] right-[15%] w-16 h-16 sm:w-24 sm:h-24 bg-yellow-300 border-4 border-yellow-500 shadow-[0_0_20px_rgba(253,224,71,0.8)] pointer-events-none"></div>
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute top-[8%] left-[-15%] opacity-90">
+        <svg class="w-32 h-12 sm:w-48 sm:h-16 fill-white" viewBox="0 0 48 16" shape-rendering="crispEdges">
+          <rect x="8" y="4" width="32" height="10" />
+          <rect x="12" y="2" width="24" height="12" />
+          <rect x="18" y="0" width="12" height="16" />
+        </svg>
+      </div>
+    </div>
+    <div class="absolute bottom-0 left-0 w-full h-[45%] pointer-events-none">
+      <svg class="w-full h-full" viewBox="0 0 1200 400" preserveAspectRatio="none" shape-rendering="crispEdges">
+        <rect x="0" y="190" width="1200" height="210" fill="#388e3c" />
+        <ellipse cx="600" cy="330" rx="520" ry="65" fill="#1f4e5b" />
+      </svg>
+    </div>
+
+    <!-- Floating vocab bubbles -->
+    <div id="vocab-bubbles-container" class="absolute inset-0 pointer-events-auto z-10">
+      <div onclick="openVocabModal('TREE','Tumbuhan berbatang kayu keras.','/trē/')" class="floating-bubble absolute top-[38%] left-[8%] cursor-pointer group">
+        <div class="pixel-box bg-emerald-900/90 border-2 border-black px-3 py-1.5 flex items-center gap-2 group-hover:scale-110 transition-transform">
+          <span class="text-xs text-emerald-300 font-bold">🌳 TREE</span>
+          <span class="text-[9px] bg-emerald-600 text-white px-1 font-mono">EN</span>
+        </div>
+      </div>
+      <div onclick="openVocabModal('RIVER','Aliran air besar yang memanjang.','/ˈrivər/')" class="floating-bubble absolute top-[52%] right-[10%] cursor-pointer group" style="animation-delay:-1.5s">
+        <div class="pixel-box bg-cyan-900/90 border-2 border-black px-3 py-1.5 flex items-center gap-2 group-hover:scale-110 transition-transform">
+          <span class="text-xs text-cyan-300 font-bold">🌊 RIVER</span>
+          <span class="text-[9px] bg-cyan-600 text-white px-1 font-mono">EN</span>
+        </div>
+      </div>
+      <div onclick="openVocabModal('BIRD','Hewan unggas berkepak yang terbang.','/bərd/')" class="floating-bubble absolute top-[22%] left-[30%] cursor-pointer group" style="animation-delay:-3s">
+        <div class="pixel-box bg-amber-900/90 border-2 border-black px-3 py-1.5 flex items-center gap-2 group-hover:scale-110 transition-transform">
+          <span class="text-xs text-amber-300 font-bold">🐦 BIRD</span>
+          <span class="text-[9px] bg-amber-600 text-white px-1 font-mono">EN</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaves -->
+    <div id="leaves-container" class="absolute inset-0 pointer-events-none z-10"></div>
+  </div>
+
+  <!-- =======================================================
+       MAIN APP WRAPPER (Landing Screen)
+       ======================================================= -->
+  <div class="app-wrapper relative z-20 w-full h-full flex flex-col justify-between p-3 sm:p-6 overflow-y-auto">
+
+    <!-- TOP BAR -->
+    <header class="w-full flex justify-between items-center max-w-5xl mx-auto">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 pixel-box bg-purple-700 flex items-center justify-center text-xl sm:text-2xl">🔤</div>
+        <div>
+          <h1 class="pixel-font-title text-sm sm:text-lg text-yellow-300 gold-glow leading-tight">VOCAB QUEST</h1>
+          <p class="text-[10px] sm:text-xs text-cyan-200 tracking-wider">PIXEL INTERACTIVE GAME</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="pixel-box bg-slate-900/90 px-2.5 py-1.5 text-right hidden xs:block">
+          <div class="text-[9px] text-gray-400">TOTAL SCORE</div>
+          <div class="text-xs sm:text-sm text-yellow-400 font-bold">⭐ <span id="global-score-val">1,250</span></div>
+        </div>
+        <button id="global-audio-btn" onclick="toggleGlobalAudio()" class="pixel-btn px-2.5 py-1.5 bg-slate-800 text-xs flex items-center gap-1.5 hover:bg-slate-700" title="Toggle Sound & Pixel BGM">
+          <span id="audio-icon">🔊</span>
+          <span id="global-bgm-status" class="text-[9px] text-emerald-300 font-mono hidden sm:inline">BGM: ON</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- LANDING: Stage selection -->
+    <main id="landing-screen" class="w-full max-w-3xl mx-auto my-auto py-6">
+      <div class="pixel-box p-4 sm:p-7 bg-[#201538]/95 border-4 border-black text-center shadow-2xl">
+        <div class="inline-block bg-yellow-500 text-black font-bold px-3 py-1 text-[10px] sm:text-xs uppercase tracking-widest mb-3 border-2 border-black">🎮 Interactive Vocabulary</div>
+        <h2 class="pixel-font-title text-lg sm:text-2xl text-white mb-2 pixel-text-shadow">PILIH STAGE PETUALANGAN</h2>
+        <p class="text-xs sm:text-sm text-purple-200 mb-6 max-w-lg mx-auto">Tingkatkan kosa kata Bahasa Inggris sambil menjelajahi dunia pixel interaktif!</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 my-2">
+          <!-- STAGE 1 -->
+          <div class="pixel-box bg-emerald-950/80 border-2 border-emerald-500/50 p-3.5 flex flex-col justify-between items-center hover:border-emerald-400 transition-all">
+            <div class="w-full text-left mb-3">
+              <span class="bg-emerald-500 text-black font-bold text-[9px] px-1.5 py-0.5 uppercase">UNLOCKED</span>
+              <h3 class="pixel-font-title text-xs text-emerald-300 mt-2">STAGE 1</h3>
+              <p class="text-[11px] text-emerald-100 mt-1">School Adventure (Sekolah)</p>
+              <div class="text-[10px] text-emerald-400/80 mt-1">10 Words • Easy</div>
+            </div>
+            <div class="w-full flex flex-col gap-2">
+              <button onclick="openGame(1)" class="pixel-btn pixel-btn-stage1 w-full text-xs py-2.5">🚀 MAIN STAGE 1</button>
+              <button onclick="openStageInfo(1)" class="text-[10px] text-emerald-300 underline hover:text-white py-0.5">🔍 Preview & Info</button>
+            </div>
+          </div>
+
+          <!-- STAGE 2 -->
+          <div class="pixel-box bg-purple-950/80 border-2 border-purple-500/50 p-3.5 flex flex-col justify-between items-center hover:border-purple-400 transition-all">
+            <div class="w-full text-left mb-3">
+              <span class="bg-purple-500 text-white font-bold text-[9px] px-1.5 py-0.5 uppercase">NEW</span>
+              <h3 class="pixel-font-title text-xs text-purple-300 mt-2">STAGE 2</h3>
+              <p class="text-[11px] text-purple-100 mt-1">After School Adventure (Home)</p>
+              <div class="text-[10px] text-purple-400/80 mt-1">10 Words • Medium</div>
+            </div>
+            <div class="w-full flex flex-col gap-2">
+              <button onclick="openGame(2)" class="pixel-btn pixel-btn-stage2 w-full text-xs py-2.5">🚀 MAIN STAGE 2</button>
+              <button onclick="openStageInfo(2)" class="text-[10px] text-purple-300 underline hover:text-white py-0.5">🔍 Preview & Info</button>
+            </div>
+          </div>
+
+          <!-- STAGE 3 (TERBUKA & AI POWERED CYBERPUNK CITY DENGAN BACKEND VERCEL) -->
+          <div class="pixel-box bg-[#0a0c27]/95 border-2 border-cyan-400 p-3.5 flex flex-col justify-between items-center hover:border-pink-500 hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all relative overflow-hidden group">
+            <div class="w-full text-left mb-3 relative z-10">
+              <div class="flex items-center justify-between">
+                <span class="bg-gradient-to-r from-cyan-400 to-pink-500 text-black font-bold text-[9px] px-1.5 py-0.5 uppercase tracking-wider glitch-badge">🤖 GEMINI 3.8 AI</span>
+                <span class="text-[9px] text-cyan-300 font-mono">UNLOCKED</span>
+              </div>
+              <h3 class="pixel-font-title text-xs text-cyan-300 mt-2 flex items-center gap-1">STAGE 3 <span class="text-pink-400 text-[10px]">⚡</span></h3>
+              <p class="text-[11px] text-pink-200 mt-1">Cyberpunk City (AI Quest)</p>
+              <div class="text-[10px] text-cyan-300/90 mt-1 flex items-center gap-1.5">
+                <span>5 Words • Dynamic AI</span>
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              </div>
+            </div>
+            <div class="w-full flex flex-col gap-2 relative z-10">
+              <button onclick="openGame(3)" class="pixel-btn w-full text-xs py-2.5 bg-gradient-to-r from-cyan-600 via-indigo-600 to-pink-600 border-2 border-cyan-300 text-white font-bold hover:brightness-110">⚡ MAIN STAGE 3</button>
+              <button onclick="openStageInfo(3)" class="text-[10px] text-cyan-300 underline hover:text-pink-300 py-0.5">🔍 Preview & Info</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-[10px] text-slate-300/90 bg-slate-950/70 p-2 px-4 border border-slate-800 mt-4">
+      <div>Pixel Interactive Game Vocabulary &copy; 2026</div>
+      <div class="flex gap-4">
+        <a href="javascript:void(0)" onclick="openHelpModal()" class="hover:underline hover:text-yellow-300">Cara Bermain</a>
+        <span>•</span>
+        <a href="javascript:void(0)" onclick="playSynthBeep(600,0.1)" class="hover:underline hover:text-yellow-300">Fitur Sound FX</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- =========================================
+       MODALS & OVERLAYS (shared)
+       ========================================= -->
+  <!-- Unavailable modal -->
+  <div id="modal-unavailable" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="pixel-box bg-slate-900 border-4 border-red-500 max-w-md w-full p-6 text-center">
+      <div class="text-4xl mb-3">🔒</div>
+      <h3 class="pixel-font-title text-sm sm:text-base text-red-400 mb-2">STAGE BELUM TERSEDIA</h3>
+      <p class="text-xs text-slate-300 mb-6 leading-relaxed">Stage 3 (Cyber City) masih dalam tahap pengembangan petualangan baru. Selesaikan Stage 1 dan Stage 2 terlebih dahulu!</p>
+      <button onclick="closeModal('modal-unavailable')" class="pixel-btn bg-red-600 w-full text-xs py-2.5">MENGERTI (TUTUP)</button>
+    </div>
+  </div>
+
+  <!-- Vocab quick modal (Feedback) -->
+  <div id="modal-vocab" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="pixel-box bg-[#1b142e] border-4 border-cyan-400 max-w-lg w-full p-5 sm:p-7 relative text-left">
+      <button id="modal-vocab-close-btn" onclick="closeModal('modal-vocab')" class="absolute top-3 right-3 text-red-400 font-bold text-sm hover:text-red-200">[X]</button>
+      <div id="modal-vocab-content"></div>
+    </div>
+  </div>
+
+  <!-- Help modal -->
+  <div id="modal-help" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="pixel-box bg-[#1b142e] border-4 border-yellow-400 max-w-lg w-full p-5 sm:p-7 relative text-left">
+      <button onclick="closeModal('modal-help')" class="absolute top-3 right-3 text-red-400 font-bold text-sm hover:text-red-200">[X]</button>
+      <h3 class="pixel-font-title text-yellow-300 mb-3">Cara Bermain</h3>
+      <div class="text-xs text-slate-200 leading-relaxed">
+        Pilih stage, kemudian jawab pilihan kata yang sesuai dengan petunjuk berbahasa Indonesia. Setiap jawaban benar memberi poin. Nikmati audio dan efek 8-bit!
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================
+       GAME 1 (School Day Adventure) SECTION
+       ================================================= -->
+  <div id="g1-container" class="hidden items-center justify-center p-4 sm:p-6 overflow-auto">
+    <div class="w-full max-w-4xl">
+      <!-- Welcome -->
+      <main id="g1-welcome" class="screen">
+        <section class="glass-card rounded-[32px] px-5 py-8 sm:px-12 sm:py-14 text-center">
+          <div class="flex justify-center gap-4 sm:gap-5 mb-4 sm:mb-5 text-4xl sm:text-5xl"><span class="floating">🎒</span> <span class="sparkle">✨</span> <span class="floating" style="animation-delay:.5s">🏫</span></div>
+          <p class="font-bold tracking-[.18em] uppercase mb-2 sm:mb-3 text-[#5865d8] text-xs sm:text-sm">English Vocabulary Game</p>
+          <h1 class="title-font font-bold leading-tight mb-3 sm:mb-4 text-[#26345e] text-3xl sm:text-4xl md:text-5xl">School Day Adventure!</h1>
+          <p class="max-w-xl mx-auto leading-relaxed mb-6 sm:mb-8 text-[#43527d] font-semibold text-sm sm:text-lg">Ayo berpetualang di sekolah sambil belajar 10 kosakata Bahasa Inggris yang seru!</p>
+          <div class="flex gap-3 justify-center">
+            <button id="g1-start-button" class="primary-button text-base sm:text-lg" style="background:#ffd85a;color:#26345e;padding:12px 24px;border-radius:12px;font-weight:bold">Start Playing</button>
+            <button onclick="closeGame()" class="primary-button text-base sm:text-lg" style="background:#cbd5e1;color:#26345e;padding:12px 24px;border-radius:12px;font-weight:bold">Kembali</button>
+          </div>
+          <p class="mt-5 sm:mt-6 font-semibold text-xs sm:text-sm text-[#647197]">Jawab dengan benar untuk mendapatkan 10 poin!</p>
+        </section>
+      </main>
+
+      <!-- Game Screen -->
+      <main id="g1-game" class="screen hidden-screen" aria-label="Permainan School Day Adventure">
+        <section class="glass-card rounded-[24px] sm:rounded-[30px] p-4 sm:p-7 w-full">
+          <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-5 gap-3">
+            <div>
+              <p class="font-bold tracking-[.15em] uppercase text-[#5865d8] text-xs sm:text-sm">Petualangan Hari Sekolah</p>
+              <h2 id="g1-location-name" class="title-font text-xl sm:text-3xl font-bold mt-1 text-[#26345e]" aria-live="polite"></h2>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-3 self-start sm:self-auto">
+              <div class="rounded-xl sm:rounded-2xl px-3 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3" style="background:#fff4bd;">
+                <span aria-hidden="true" class="text-xl sm:text-2xl">⭐</span>
+                <div>
+                  <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#7b6725]">Skor Kamu</p>
+                  <p id="g1-score-value" class="title-font text-xl sm:text-2xl font-bold leading-none mt-1 text-[#26345e]" aria-live="polite">0</p>
+                </div>
+              </div>
+              <button id="g1-mute-button" onclick="toggleGlobalAudio()" class="rounded-xl sm:rounded-2xl p-3 flex items-center justify-center cursor-pointer hover:brightness-95 transition-all" style="background:#fff4bd;color:#7b6725;" title="Toggle Sound & Pixel BGM">
+                🔊
+              </button>
+            </div>
+          </header>
+
+          <div class="mb-4 sm:mb-6">
+            <div class="flex justify-between text-xs sm:text-sm font-bold mb-2 text-[#43527d]">
+              <span id="g1-progress-text">1 / 10</span> <span id="g1-progress-percent">10%</span>
+            </div>
+            <div class="progress-track rounded-full h-2 sm:h-3 overflow-hidden bg-slate-200">
+              <div id="g1-progress-fill" class="progress-fill h-full rounded-full" style="width:10%; background:#ffd85a;"></div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-[.85fr_1.15fr] gap-4 sm:gap-6 items-center">
+            <section class="visual-stage rounded-[20px] sm:rounded-[26px] p-6 flex flex-col items-center justify-center text-center bg-white/70">
+              <div id="g1-scene-emoji" class="text-6xl sm:text-7xl lg:text-8xl floating" aria-hidden="true">🥤</div>
+              <p id="g1-scene-caption" class="font-bold mt-2 sm:mt-4 text-sm sm:text-lg px-2 text-[#26345e]"></p>
+            </section>
+            <section>
+              <div class="dialog-bubble relative bg-white/90 rounded-[20px] sm:rounded-[24px] p-4 sm:p-5 mb-4 sm:mb-5 shadow-sm">
+                <div class="flex items-center gap-3 mb-2 sm:mb-3">
+                  <div id="g1-character-avatar" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-xl sm:text-2xl bg-[#fff0b4]" aria-hidden="true">👧</div>
+                  <div>
+                    <p id="g1-character-name" class="title-font font-bold text-base sm:text-lg leading-tight text-[#26345e]"></p>
+                    <p class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#7983ad]">Kata Temanmu</p>
+                  </div>
+                </div>
+                <p id="g1-dialog-text" class="leading-relaxed text-sm sm:text-base min-h-[48px] sm:min-h-[56px] text-[#26345e]" aria-live="polite"></p>
+              </div>
+              <p class="font-bold mb-2 sm:mb-3 text-[#26345e] text-sm sm:text-base">Choose the correct English word for the Indonesian clue.</p>
+              <div id="g1-answers-list" class="space-y-2 sm:space-y-3" role="group">
+                <button class="answer-button g1-answer-button flex items-center gap-3" type="button" data-answer-index="0"><span class="answer-letter">A</span><span class="answer-copy"></span></button>
+                <button class="answer-button g1-answer-button flex items-center gap-3" type="button" data-answer-index="1"><span class="answer-letter">B</span><span class="answer-copy"></span></button>
+                <button class="answer-button g1-answer-button flex items-center gap-3" type="button" data-answer-index="2"><span class="answer-letter">C</span><span class="answer-copy"></span></button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <!-- End screen -->
+      <main id="g1-end" class="screen hidden-screen" aria-labelledby="g1-end-title">
+        <section class="glass-card rounded-[32px] p-5 sm:p-10 text-center max-w-3xl mx-auto">
+          <div class="text-5xl sm:text-6xl mb-2 sm:mb-3 sparkle">🏆</div>
+          <p class="font-bold tracking-[.15em] uppercase mb-2 text-[#5865d8] text-xs sm:text-sm">Petualangan Selesai!</p>
+          <h1 id="g1-end-title" class="title-font font-bold mb-2 sm:mb-3 text-[#26345e] text-2xl sm:text-4xl">Kamu Hebat!</h1>
+          <p class="max-w-lg mx-auto mb-4 sm:mb-5 text-[#43527d] font-semibold text-sm sm:text-base">Kamu sudah menjelajahi sekolah dan mempelajari kosakata baru. Terus semangat belajar!</p>
+
+          <div class="mx-auto max-w-xs rounded-2xl sm:rounded-3xl py-4 sm:py-5 px-6 mb-6 sm:mb-8" style="background:#fff4bd;">
+            <p class="font-bold uppercase tracking-wider text-[#7b6725] text-xs sm:text-sm">Total Skor</p>
+            <p id="g1-final-score-value" class="title-font text-4xl sm:text-5xl font-bold mt-1 text-[#26345e]">0 / 100</p>
+          </div>
+
+          <section class="text-left mb-6 sm:mb-8">
+            <h2 class="title-font font-bold text-center mb-4 text-[#26345e] text-lg sm:text-xl">Kosakata yang Kamu Pelajari</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[#26345e] text-xs sm:text-sm">
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">A glass of water <span class="mx-2 opacity-50">•</span> Segelas air</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Borrow <span class="mx-2 opacity-50">•</span> Meminjam</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Homework <span class="mx-2 opacity-50">•</span> Pekerjaan rumah</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Sweep <span class="mx-2 opacity-50">•</span> Menyapu</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Catch <span class="mx-2 opacity-50">•</span> Menangkap</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Draw <span class="mx-2 opacity-50">•</span> Menggambar</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Porridge <span class="mx-2 opacity-50">•</span> Bubur</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Heavy <span class="mx-2 opacity-50">•</span> Berat</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Wet <span class="mx-2 opacity-50">•</span> Basah</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Umbrella <span class="mx-2 opacity-50">•</span> Payung</div>
+            </div>
+          </section>
+
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button id="g1-play-again-button" class="primary-button text-sm sm:text-base" style="background:#ffd85a;color:#26345e;padding:12px 24px;border-radius:12px;font-weight:bold">Play Again</button>
+            <button onclick="closeGame()" class="primary-button text-sm sm:text-base" style="background:#cbd5e1;color:#26345e;padding:12px 24px;border-radius:12px;font-weight:bold">Kembali ke Landing</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- =================================================
+       GAME 2 (After School Adventure) SECTION
+       ================================================= -->
+  <div id="g2-container" class="hidden items-center justify-center p-4 sm:p-6 overflow-auto">
+    <div class="w-full max-w-4xl">
+      <!-- Welcome -->
+      <main id="g2-welcome" class="screen">
+        <section class="glass-card rounded-[32px] px-6 py-10 sm:px-12 sm:py-14 text-center">
+          <div class="flex justify-center gap-5 mb-5 text-4xl sm:text-5xl"><span class="floating">🚌</span> <span class="sparkle">✨</span> <span class="floating" style="animation-delay:.5s">🛋️</span></div>
+          <p class="font-bold tracking-[.18em] uppercase mb-3 text-[#5865d8] text-sm">English Vocabulary Game</p>
+          <h1 id="g2-welcome-title" class="title-font font-bold leading-tight mb-4 text-[#26345e] text-2xl sm:text-4xl">After School Adventure!</h1>
+          <p class="max-w-xl mx-auto leading-relaxed mb-8 text-[#43527d] font-semibold text-sm sm:text-lg">Ayo belajar 10 kosakata Bahasa Inggris baru seputar aktivitas pulang sekolah!</p>
+          <div class="flex gap-3 justify-center">
+            <button id="g2-start-button" class="primary-button" style="background:rgb(255,216,90);color:rgb(38,52,94);font-weight:700;font-size:18px;padding:12px 24px;border-radius:12px">Start Playing</button>
+            <button onclick="closeGame()" class="primary-button" style="background:#cbd5e1;color:#26345e;padding:12px 24px;border-radius:12px;font-weight:bold">Kembali</button>
+          </div>
+          <p class="mt-6 text-sm text-[#647197] font-semibold">Jawab dengan benar untuk mendapatkan 10 poin!</p>
+        </section>
+      </main>
+
+      <!-- Game -->
+      <main id="g2-game" class="screen hidden-screen" aria-label="Permainan After School Adventure">
+        <section class="glass-card rounded-[30px] p-4 sm:p-7">
+          <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5">
+            <div>
+              <p class="font-bold tracking-[.15em] uppercase text-sm text-[#5865d8]">Petualangan Sepulang Sekolah</p>
+              <h2 id="g2-location-name" class="title-font text-2xl sm:text-3xl font-bold mt-1 text-[#26345e]" aria-live="polite"></h2>
+            </div>
+            <div class="flex items-center gap-3 self-start sm:self-auto">
+              <div class="rounded-2xl px-4 py-3 flex items-center gap-3" style="background:rgb(255,244,189);">
+                <span aria-hidden="true" class="text-2xl">⭐</span>
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wider text-[#7b6725]">Skor Kamu</p>
+                  <p id="g2-score-value" class="title-font text-2xl font-bold text-[#26345e]" aria-live="polite">0</p>
+                </div>
+              </div>
+              <button id="g2-mute-button" onclick="toggleGlobalAudio()" class="rounded-2xl p-3 flex items-center justify-center cursor-pointer hover:brightness-95 transition-all" style="background:rgb(255,244,189);color:rgb(123,103,37);" title="Toggle Sound & Pixel BGM">
+                🔊
+              </button>
+            </div>
+          </header>
+
+          <div class="mb-6">
+            <div class="flex justify-between text-sm font-bold mb-2 text-[#43527d]">
+              <span id="g2-progress-text">1 / 10</span> <span id="g2-progress-percent">10%</span>
+            </div>
+            <div class="progress-track rounded-full h-3 overflow-hidden bg-slate-200">
+              <div id="g2-progress-fill" class="progress-fill h-full rounded-full" style="width:10%; background:#ffd85a;"></div>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-[.85fr_1.15fr] gap-6 items-center">
+            <section class="visual-stage rounded-[26px] p-6 flex flex-col items-center justify-center text-center bg-white/70">
+              <div id="g2-scene-emoji" class="text-7xl sm:text-8xl floating">🚌</div>
+              <p id="g2-scene-caption" class="font-bold mt-4 text-lg text-[#26345e]"></p>
+            </section>
+            <section>
+              <div class="dialog-bubble relative bg-white/90 rounded-[24px] p-5 mb-5 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                  <div id="g2-character-avatar" class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl" style="background:#fff0b4">👦</div>
+                  <div>
+                    <p id="g2-character-name" class="title-font font-bold text-lg text-[#26345e]"></p>
+                    <p class="text-xs font-bold uppercase tracking-widest text-[#7983ad]">Kata Mereka</p>
+                  </div>
+                </div>
+                <p id="g2-dialog-text" class="leading-relaxed min-h-[56px] text-[#26345e]" aria-live="polite"></p>
+              </div>
+
+              <p class="font-bold mb-3 text-[#26345e]">Choose the correct English word for the Indonesian clue.</p>
+              <div id="g2-answers-list" class="space-y-3" role="group" aria-label="Pilihan jawaban">
+                <button class="answer-button g2-answer-button flex items-center gap-3" data-answer-index="0"><span class="answer-letter">A</span><span class="answer-copy"></span></button>
+                <button class="answer-button g2-answer-button flex items-center gap-3" data-answer-index="1"><span class="answer-letter">B</span><span class="answer-copy"></span></button>
+                <button class="answer-button g2-answer-button flex items-center gap-3" data-answer-index="2"><span class="answer-letter">C</span><span class="answer-copy"></span></button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <!-- End -->
+      <main id="g2-end" class="screen hidden-screen" aria-labelledby="g2-end-title">
+        <section class="glass-card rounded-[32px] p-6 sm:p-10 text-center">
+          <div class="text-6xl mb-3 sparkle">🏆</div>
+          <p class="font-bold tracking-[.15em] uppercase mb-2 text-[#5865d8] text-sm">Petualangan Selesai!</p>
+          <h1 id="g2-end-title" class="title-font font-bold mb-3 text-[#26345e] text-2xl sm:text-4xl">Kamu Hebat!</h1>
+          <p class="max-w-lg mx-auto mb-5 text-[#43527d] font-semibold text-sm sm:text-base">Kamu sudah menyelesaikan rutinitas sepulang sekolah dan belajar banyak kosakata baru!</p>
+
+          <div class="mx-auto max-w-xs rounded-3xl py-5 px-6 mb-8" style="background:rgb(255,244,189);">
+            <p class="font-bold uppercase tracking-wider text-sm text-[#7b6725]">Total Skor</p>
+            <p id="g2-final-score-value" class="title-font text-5xl font-bold mt-1 text-[#26345e]">0 / 100</p>
+          </div>
+
+          <section aria-labelledby="g2-vocabulary-title" class="text-left mb-8">
+            <h2 id="g2-vocabulary-title" class="title-font font-bold text-center mb-4 text-[#26345e] text-xl">Kosakata yang Kamu Pelajari</h2>
+            <div class="grid sm:grid-cols-2 gap-2 text-[#26345e] text-xs sm:text-sm">
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Wait <span class="mx-2 opacity-50">•</span> Menunggu</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Take off <span class="mx-2 opacity-50">•</span> Melepas</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Hungry <span class="mx-2 opacity-50">•</span> Lapar</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Change <span class="mx-2 opacity-50">•</span> Mengganti</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Rest <span class="mx-2 opacity-50">•</span> Istirahat</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Water <span class="mx-2 opacity-50">•</span> Menyiram</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Ride <span class="mx-2 opacity-50">•</span> Mengendarai / Naik</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Soap <span class="mx-2 opacity-50">•</span> Sabun</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Delicious <span class="mx-2 opacity-50">•</span> Sangat enak</div>
+              <div class="p-2.5 bg-white/80 rounded-xl border border-indigo-100">Prepare <span class="mx-2 opacity-50">•</span> Menyiapkan</div>
+            </div>
+          </section>
+
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button id="g2-play-again-button" class="primary-button" style="background:rgb(255,216,90);color:rgb(38,52,94);font-weight:700;font-size:17px;padding:12px 24px;border-radius:12px">Play Again</button>
+            <button onclick="closeGame()" class="primary-button" style="background:#cbd5e1;color:#26345e;padding:12px 24px;border-radius:12px;font-weight:bold">Kembali ke Landing</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- =================================================
+       GAME 3 (CYBERPUNK CITY - GEMINI 3.8 AI STAGE) SECTION
+       ================================================= -->
+  <div id="g3-container" class="hidden items-center justify-center p-4 sm:p-6 overflow-auto cyber-grid-bg">
+    <div class="w-full max-w-4xl relative z-10">
+
+      <!-- G3 Welcome Screen -->
+      <main id="g3-welcome" class="screen">
+        <section class="cyber-card rounded-[28px] sm:rounded-[36px] px-5 py-8 sm:px-12 sm:py-12 text-center">
+          <div class="flex justify-center items-center gap-3 sm:gap-5 mb-4 text-4xl sm:text-5xl">
+            <span class="floating">🤖</span>
+            <span class="sparkle text-cyan-300">⚡</span>
+            <span class="floating" style="animation-delay:.6s">🏙️</span>
+          </div>
+
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-cyan-950/80 border border-cyan-400/50 rounded-full mb-3">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="cyber-font-mono text-[10px] sm:text-xs text-cyan-300 font-bold uppercase tracking-widest">GEMINI 3.8 FLASH • NEURAL MISSION</span>
+          </div>
+
+          <h1 class="cyber-font-tech font-bold leading-tight mb-2 sm:mb-3 text-cyan-300 cyber-neon-text-cyan text-2xl sm:text-4xl md:text-5xl">
+            CYBERPUNK CITY 2077
+          </h1>
+          <p class="max-w-xl mx-auto leading-relaxed mb-6 text-slate-300 text-xs sm:text-base cyber-font-mono">
+            Selamat datang di Kota Masa Depan! <span class="text-pink-400 font-bold">Google Gemini AI</span> langsung meracik 5 kosakata bahasa Inggris secara dinamis dan unik setiap kali Anda berpetualang.
+          </p>
+
+          <!-- API Key Status Badge (Secured Backend) -->
+          <div class="max-w-md mx-auto mb-6 p-3.5 bg-[#120a2e]/90 border border-cyan-500/50 rounded-xl text-left flex items-center justify-between gap-3 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">🟢</span>
+              <div>
+                <div class="text-[10px] cyber-font-mono text-gray-400 uppercase">STATUS AI ENGINE</div>
+                <div class="text-xs font-bold text-emerald-400 cyber-font-mono">Online & Aman (Vercel Backend Aktif)</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-cyan-950 border border-cyan-400 text-cyan-300 px-2 py-1 rounded cyber-font-mono">API READY</span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+            <button id="g3-start-button" class="pixel-btn text-xs sm:text-sm py-3 bg-gradient-to-r from-cyan-500 to-blue-600 border-2 border-cyan-300 text-black font-bold hover:brightness-110 shadow-[0_0_15px_rgba(0,240,255,0.5)] flex-1">
+              🚀 MULAI MISI CYBER
+            </button>
+            <button onclick="closeGame()" class="pixel-btn text-xs sm:text-sm py-3 bg-slate-800 border-2 border-slate-600 text-slate-300 hover:bg-slate-700 flex-1">
+              KEMBALI
+            </button>
+          </div>
+
+          <p class="mt-5 text-[11px] sm:text-xs text-cyan-400/80 cyber-font-mono">
+            Setiap jawaban benar memberi +10 Poin Energi Cyber!
+          </p>
+        </section>
+      </main>
+
+      <!-- G3 Loading / AI Generation Screen -->
+      <main id="g3-loading" class="screen hidden-screen">
+        <section class="cyber-card rounded-[28px] sm:rounded-[36px] p-8 sm:p-14 text-center max-w-2xl mx-auto border-2 border-pink-500 shadow-[0_0_35px_rgba(255,0,127,0.3)]">
+          <div class="text-6xl sm:text-7xl mb-5 floating">🔮</div>
+          <div class="inline-block px-3 py-1 bg-pink-950/80 border border-pink-400 rounded-full mb-3">
+            <span class="text-[10px] cyber-font-mono text-pink-300 font-bold uppercase tracking-widest animate-pulse">GENERATING NEURAL SCENARIOS...</span>
+          </div>
+          <h2 class="cyber-font-tech text-xl sm:text-2xl text-cyan-300 cyber-neon-text-cyan font-bold mb-3">
+            MENGHUBUNGKAN KE GEMINI AI
+          </h2>
+          <p id="g3-loading-status" class="text-xs sm:text-sm text-slate-300 cyber-font-mono mb-6">
+            Merancang 5 kosakata baru dengan tema Cyberpunk City...
+          </p>
+
+          <!-- Animated Terminal Matrix -->
+          <div class="bg-[#0b051f] border border-cyan-500/40 rounded-xl p-4 text-left font-mono text-[11px] text-cyan-400/90 space-y-1 mb-6 shadow-inner">
+            <div class="flex items-center gap-2"><span class="text-pink-400">[01]</span> Menginisialisasi Neural Network Gemini 3.8 Flash...</div>
+            <div class="flex items-center gap-2"><span class="text-pink-400">[02]</span> Membangun atmosfer kota neon & hologram 2077...</div>
+            <div class="flex items-center gap-2"><span class="text-pink-400">[03]</span> Mengomposisi 5 soal vocabulary interaktif...</div>
+            <div class="flex items-center gap-2 text-yellow-300 animate-pulse"><span class="text-pink-400">[04]</span> Menyiapkan misi petualangan player... <span class="inline-block w-2 h-3 bg-yellow-300 ml-1"></span></div>
+          </div>
+
+          <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-cyan-500/30">
+            <div class="h-full bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 animate-pulse" style="width:100%"></div>
+          </div>
+        </section>
+      </main>
+
+      <!-- G3 Main Game Screen -->
+      <main id="g3-game" class="screen hidden-screen" aria-label="Permainan Cyberpunk City AI Quest">
+        <section class="cyber-card rounded-[24px] sm:rounded-[32px] p-4 sm:p-7 w-full border-2 border-cyan-400">
+          
+          <!-- Header HUD -->
+          <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-5 gap-3 border-b border-cyan-500/20 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="bg-gradient-to-r from-cyan-500 to-pink-500 text-black font-bold text-[9px] px-1.5 py-0.5 uppercase tracking-wider rounded">AI STAGE 3</span>
+                <span class="text-[10px] cyber-font-mono text-cyan-400">CYBER MISSION 2077</span>
+              </div>
+              <h2 id="g3-location-name" class="cyber-font-tech text-lg sm:text-2xl font-bold mt-1 text-cyan-200 cyber-neon-text-cyan" aria-live="polite">Neon Alley</h2>
+            </div>
+
+            <div class="flex items-center gap-2.5 self-start sm:self-auto">
+              <!-- Score Box -->
+              <div class="rounded-xl px-3 py-1.5 sm:px-4 sm:py-2.5 flex items-center gap-2 bg-[#120a2e] border border-cyan-400/50 shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+                <span aria-hidden="true" class="text-lg sm:text-xl text-yellow-400">⚡</span>
+                <div>
+                  <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-cyan-300 cyber-font-mono">ENERGY SCORE</p>
+                  <p id="g3-score-value" class="cyber-font-tech text-lg sm:text-xl font-bold leading-none text-yellow-300 mt-0.5" aria-live="polite">0</p>
+                </div>
+              </div>
+
+              <!-- Quick Audio Mute -->
+              <button id="g3-audio-toggle-btn" onclick="toggleGlobalAudio()" class="rounded-xl p-2.5 bg-[#120a2e] border border-cyan-400/50 text-cyan-300 hover:text-white" title="Toggle Sound">
+                🔊
+              </button>
+            </div>
+          </header>
+
+          <!-- Progress Bar -->
+          <div class="mb-4 sm:mb-6">
+            <div class="flex justify-between text-xs font-bold mb-1.5 cyber-font-mono text-cyan-300">
+              <span id="g3-progress-text">1 / 5</span> 
+              <span id="g3-progress-percent" class="text-pink-400">20%</span>
+            </div>
+            <div class="rounded-full h-2.5 sm:h-3 overflow-hidden bg-slate-900 border border-cyan-500/40">
+              <div id="g3-progress-fill" class="h-full rounded-full transition-all duration-300 bg-gradient-to-r from-cyan-400 to-pink-500 shadow-[0_0_10px_#00f0ff]" style="width:20%"></div>
+            </div>
+          </div>
+
+          <!-- Scene + Dialog + Answers Grid -->
+          <div class="grid md:grid-cols-[.85fr_1.15fr] gap-4 sm:gap-6 items-center">
+            
+            <!-- Hologram Visual Stage -->
+            <section class="rounded-[20px] sm:rounded-[26px] p-5 flex flex-col items-center justify-center text-center bg-[#0d0724] border border-cyan-500/40 shadow-[inset_0_0_20px_rgba(0,240,255,0.15)] relative overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-pink-500/10 pointer-events-none"></div>
+              <div id="g3-scene-emoji" class="text-6xl sm:text-7xl lg:text-8xl floating relative z-10" aria-hidden="true">🤖</div>
+              <p id="g3-scene-caption" class="font-bold mt-3 text-xs sm:text-sm px-2 text-cyan-200 cyber-font-mono relative z-10"></p>
+              <div class="mt-2 text-[9px] text-pink-400 font-mono tracking-widest uppercase">[HOLOGRAM SIMULATION // ACTIVE]</div>
+            </section>
+
+            <!-- Dialog & Answer Section -->
+            <section>
+              <div class="relative bg-[#150e36]/90 border border-pink-500/40 rounded-[20px] sm:rounded-[24px] p-4 sm:p-5 mb-4 shadow-[0_0_15px_rgba(255,0,127,0.1)]">
+                <div class="flex items-center gap-3 mb-2 sm:mb-3">
+                  <div id="g3-character-avatar" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-xl sm:text-2xl bg-cyan-950 border border-cyan-400" aria-hidden="true">🤖</div>
+                  <div>
+                    <p id="g3-character-name" class="cyber-font-tech font-bold text-sm sm:text-base text-cyan-300 leading-tight">Unit 01</p>
+                    <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-pink-400 cyber-font-mono">Cyber Transmission</p>
+                  </div>
+                </div>
+                <p id="g3-dialog-text" class="leading-relaxed text-xs sm:text-sm min-h-[48px] sm:min-h-[56px] text-slate-100 cyber-font-mono" aria-live="polite"></p>
+              </div>
+
+              <p class="font-bold mb-2 text-cyan-300 text-xs sm:text-sm cyber-font-mono flex items-center gap-1.5">
+                <span>PILIH KOSAKATA INGGRIS YANG TEPAT:</span>
+              </p>
+
+              <div id="g3-answers-list" class="space-y-2.5" role="group">
+                <button class="cyber-answer-button g3-answer-button flex items-center gap-3" type="button" data-answer-index="0">
+                  <span class="cyber-answer-letter">A</span>
+                  <span class="answer-copy cyber-font-tech text-xs sm:text-sm font-bold"></span>
+                </button>
+                <button class="cyber-answer-button g3-answer-button flex items-center gap-3" type="button" data-answer-index="1">
+                  <span class="cyber-answer-letter">B</span>
+                  <span class="answer-copy cyber-font-tech text-xs sm:text-sm font-bold"></span>
+                </button>
+                <button class="cyber-answer-button g3-answer-button flex items-center gap-3" type="button" data-answer-index="2">
+                  <span class="cyber-answer-letter">C</span>
+                  <span class="answer-copy cyber-font-tech text-xs sm:text-sm font-bold"></span>
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <!-- G3 End / Results Screen -->
+      <main id="g3-end" class="screen hidden-screen" aria-labelledby="g3-end-title">
+        <section class="cyber-card rounded-[32px] p-5 sm:p-10 text-center max-w-3xl mx-auto border-2 border-cyan-400 shadow-[0_0_35px_rgba(0,240,255,0.3)]">
+          <div class="text-5xl sm:text-6xl mb-2 sm:mb-3 sparkle">🏆</div>
+          <p class="font-bold tracking-[.18em] uppercase mb-1 text-cyan-400 text-xs sm:text-sm cyber-font-mono">CYBER MISSION COMPLETE!</p>
+          <h1 id="g3-end-title" class="cyber-font-tech font-bold mb-2 sm:mb-3 text-cyan-300 cyber-neon-text-cyan text-2xl sm:text-4xl">
+            SISTEM DIBOBOL DENGAN SUKSES!
+          </h1>
+          <p class="max-w-lg mx-auto mb-4 sm:mb-5 text-slate-300 font-medium text-xs sm:text-sm cyber-font-mono">
+            Kamu berhasil menyelesaikan 5 misi vocabulary Cyberpunk City yang di-generate langsung oleh Gemini AI!
+          </p>
+
+          <div class="mx-auto max-w-xs rounded-2xl py-4 sm:py-5 px-6 mb-6 bg-[#130b30] border border-cyan-400 shadow-[0_0_20px_rgba(0,240,255,0.2)]">
+            <p class="font-bold uppercase tracking-wider text-pink-400 text-xs cyber-font-mono">TOTAL SKOR ENERGI</p>
+            <p id="g3-final-score-value" class="cyber-font-tech text-4xl sm:text-5xl font-bold mt-1 text-yellow-300">0 / 50</p>
+          </div>
+
+          <section class="text-left mb-6 sm:mb-8">
+            <h2 class="cyber-font-tech font-bold text-center mb-4 text-cyan-300 text-sm sm:text-lg">
+              KOSAKATA AI YANG KAMU PELAJARI
+            </h2>
+            <div id="g3-vocab-summary-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs cyber-font-mono">
+            </div>
+          </section>
+
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button id="g3-play-again-button" class="pixel-btn text-xs sm:text-sm py-3 bg-gradient-to-r from-cyan-500 via-pink-500 to-yellow-500 text-black font-bold border-2 border-white hover:brightness-110 shadow-[0_0_20px_rgba(0,240,255,0.5)]">
+              🔄 MAIN LAGI (GENERATE SOAL BARU AI)
+            </button>
+            <button onclick="closeGame()" class="pixel-btn text-xs sm:text-sm py-3 bg-slate-800 text-slate-300 hover:bg-slate-700">
+              KEMBALI KE MENU
+            </button>
+          </div>
+        </section>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- =================================================
+       SCRIPTS
+       ================================================= -->
+  <script>
+    /* ===========================
+       Utilities (modals, leaves)
+       =========================== */
+    function closeModal(id) { 
+      var el = document.getElementById(id);
+      if(el) el.classList.add('hidden'); 
+      if(id === 'modal-vocab'){
+        var closeX = document.getElementById('modal-vocab-close-btn');
+        if(closeX) closeX.classList.remove('hidden');
+      }
+    }
+    function openModal(id) { 
+      var el = document.getElementById(id);
+      if(el) el.classList.remove('hidden'); 
+    }
+    function openHelpModal(){ openModal('modal-help'); }
+    function showUnavailableModal(){ playSynthBeep(220,0.2,'sawtooth'); openModal('modal-unavailable'); }
+
+    function openVocabModal(title, definition, pron){ 
+      playSynthBeep(587.33,0.15,'triangle');
+      var closeX = document.getElementById('modal-vocab-close-btn');
+      if(closeX) closeX.classList.remove('hidden');
+      const modal = document.getElementById('modal-vocab');
+      const content = document.getElementById('modal-vocab-content');
+      content.innerHTML = '<div class="text-xs text-cyan-400 font-bold uppercase tracking-wider mb-1">📖 Kosa Kata Interaktif</div>' +
+        '<h3 class="pixel-font-title text-base sm:text-xl text-yellow-300 mb-3">'+title+'</h3>' +
+        '<div class="pixel-box bg-slate-900 p-3 mb-4 text-xs text-slate-200 leading-relaxed"><p class="font-bold text-emerald-400 mb-1">Arti & Penjelasan:</p><p>'+definition+'</p></div>' +
+        '<div class="flex gap-2">' +
+          '<button onclick="speakWord(\''+title+'\', \'en-US\')" class="pixel-btn bg-indigo-600 text-xs py-2 flex-1">🔊 Pronunciation</button>' +
+          '<button onclick="closeModal(\'modal-vocab\')" class="pixel-btn bg-slate-700 text-xs py-2 flex-1">Tutup</button>' +
+        '</div>';
+      modal.classList.remove('hidden');
+    }
+
+    // Leaves generator
+    (function createLeaves(){
+      var container = document.getElementById('leaves-container');
+      if(!container) return;
+      var leafColors = ['#4caf50','#81c784','#ffb74d','#e57373'];
+      var leafCount = window.innerWidth < 600 ? 8 : 16;
+      for(var i=0;i<leafCount;i++){
+        var leaf = document.createElement('div');
+        leaf.className='pixel-leaf';
+        var color = leafColors[Math.floor(Math.random()*leafColors.length)];
+        leaf.style.left = (Math.random()*95)+'%';
+        leaf.style.animationDuration = (8+Math.random()*10)+'s';
+        leaf.style.animationDelay = (-Math.random()*10)+'s';
+        leaf.innerHTML = '<svg width="12" height="12" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="2" y="1" width="4" height="6" fill="'+color+'" /><rect x="1" y="3" width="6" height="2" fill="'+color+'" /></svg>';
+        container.appendChild(leaf);
+      }
+    })();
+
+    // Basic browser TTS
+    function speakWord(word, lang){
+      playSynthBeep(440,0.08);
+      if('speechSynthesis' in window){
+        var u = new SpeechSynthesisUtterance(word);
+        u.lang = lang || 'en-US';
+        u.rate = 0.95;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    /* ===========================
+       WEB AUDIO SYNTHESIZER & 8-BIT PIXEL BGM ENGINE
+       =========================== */
+    var audioCtx = null;
+    var isMutedGlobal = false;
+    var bgmMasterGain = null;
+    var noiseBuffer = null;
+    var isBGMRunning = false;
+    var bgmTimerID = null;
+
+    // Musical Note Frequencies for Chiptune Synth (C Major / A Minor)
+    var NOTE = {
+      C2: 65.41, D2: 73.42, E2: 82.41, F2: 87.31, G2: 98.00, A2: 110.00, B2: 123.47,
+      C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94,
+      C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+      C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00, B5: 987.77,
+      C6: 1046.50, D6: 1174.66, E6: 1318.51, F6: 1396.91, G6: 1567.98,
+      _: 0
+    };
+
+    // 8 Bars Cheerful Retro Chiptune (128 sixteenth steps @ 136 BPM)
+    // High-energy, joyful, Nintendo/Kirby/Mario style
+    var bgmMelody = [
+      // Bar 1 (C Major - Bouncy happy intro)
+      NOTE.E5, NOTE._,  NOTE.G5, NOTE._,  NOTE.C6, NOTE._,  NOTE.E6, NOTE.D6,
+      NOTE.C6, NOTE._,  NOTE.G5, NOTE._,  NOTE.E5, NOTE.G5, NOTE.A5, NOTE.B5,
+      // Bar 2 (Am - Melodic lift)
+      NOTE.C6, NOTE._,  NOTE.E5, NOTE._,  NOTE.A5, NOTE._,  NOTE.C6, NOTE.B5,
+      NOTE.A5, NOTE._,  NOTE.E5, NOTE._,  NOTE.C5, NOTE.D5, NOTE.E5, NOTE._,
+      // Bar 3 (F Major - Bright sunny hook)
+      NOTE.F5, NOTE._,  NOTE.A5, NOTE._,  NOTE.C6, NOTE._,  NOTE.F6, NOTE.E6,
+      NOTE.D6, NOTE._,  NOTE.C6, NOTE._,  NOTE.A5, NOTE.C6, NOTE.D6, NOTE.E6,
+      // Bar 4 (G Major - Playful run)
+      NOTE.D6, NOTE._,  NOTE.B5, NOTE._,  NOTE.G5, NOTE._,  NOTE.A5, NOTE.B5,
+      NOTE.C6, NOTE.D6, NOTE.E6, NOTE.D6, NOTE.C6, NOTE.B5, NOTE.A5, NOTE.B5,
+
+      // Bar 5 (C Major - High excitement variation)
+      NOTE.C6, NOTE.C6, NOTE.G5, NOTE._,  NOTE.E5, NOTE.G5, NOTE.C6, NOTE.E6,
+      NOTE.G6, NOTE._,  NOTE.E6, NOTE._,  NOTE.C6, NOTE._,  NOTE.G5, NOTE._,
+      // Bar 6 (F Major - Syncopated groove)
+      NOTE.A5, NOTE.A5, NOTE.C6, NOTE._,  NOTE.F5, NOTE.A5, NOTE.C6, NOTE.F6,
+      NOTE.E6, NOTE.D6, NOTE.C6, NOTE.A5, NOTE.C6, NOTE._,  NOTE.D6, NOTE._,
+      // Bar 7 (Em-Am - Dynamic turn)
+      NOTE.B5, NOTE._,  NOTE.D6, NOTE._,  NOTE.G6, NOTE.F6, NOTE.E6, NOTE.D6,
+      NOTE.E6, NOTE.D6, NOTE.C6, NOTE.B5, NOTE.A5, NOTE.B5, NOTE.C6, NOTE.D6,
+      // Bar 8 (G7-C - Cheerful cadence back to loop)
+      NOTE.E6, NOTE._,  NOTE.D6, NOTE._,  NOTE.C6, NOTE._,  NOTE.G5, NOTE._,
+      NOTE.C6, NOTE._,  NOTE.E6, NOTE._,  NOTE.C6, NOTE._,  NOTE._,  NOTE._
+    ];
+
+    var bgmHarmony = [
+      // Bar 1
+      NOTE.C5, NOTE._,  NOTE.E5, NOTE._,  NOTE.G5, NOTE._,  NOTE.C6, NOTE.B5,
+      NOTE.G5, NOTE._,  NOTE.E5, NOTE._,  NOTE.C5, NOTE.E5, NOTE.F5, NOTE.G5,
+      // Bar 2
+      NOTE.A4, NOTE._,  NOTE.C5, NOTE._,  NOTE.E5, NOTE._,  NOTE.A5, NOTE.G5,
+      NOTE.E5, NOTE._,  NOTE.C5, NOTE._,  NOTE.A4, NOTE.B4, NOTE.C5, NOTE._,
+      // Bar 3
+      NOTE.F4, NOTE._,  NOTE.A4, NOTE._,  NOTE.C5, NOTE._,  NOTE.A5, NOTE.G5,
+      NOTE.F5, NOTE._,  NOTE.E5, NOTE._,  NOTE.F4, NOTE.A4, NOTE.B4, NOTE.C5,
+      // Bar 4
+      NOTE.G4, NOTE._,  NOTE.B4, NOTE._,  NOTE.D5, NOTE._,  NOTE.F5, NOTE.G5,
+      NOTE.E5, NOTE.F5, NOTE.G5, NOTE.F5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.D5,
+
+      // Bar 5
+      NOTE.E5, NOTE.E5, NOTE.E5, NOTE._,  NOTE.C5, NOTE.E5, NOTE.G5, NOTE.C6,
+      NOTE.E5, NOTE._,  NOTE.C5, NOTE._,  NOTE.G4, NOTE._,  NOTE.E5, NOTE._,
+      // Bar 6
+      NOTE.F5, NOTE.F5, NOTE.A5, NOTE._,  NOTE.C5, NOTE.F5, NOTE.A5, NOTE.C6,
+      NOTE.C5, NOTE.B4, NOTE.A4, NOTE.F4, NOTE.A4, NOTE._,  NOTE.B4, NOTE._,
+      // Bar 7
+      NOTE.G4, NOTE._,  NOTE.B4, NOTE._,  NOTE.D5, NOTE.D5, NOTE.C5, NOTE.B4,
+      NOTE.C5, NOTE.B4, NOTE.A4, NOTE.G4, NOTE.F4, NOTE.G4, NOTE.A4, NOTE.B4,
+      // Bar 8
+      NOTE.C5, NOTE._,  NOTE.B4, NOTE._,  NOTE.G4, NOTE._,  NOTE.E4, NOTE._,
+      NOTE.E4, NOTE._,  NOTE.G4, NOTE._,  NOTE.E4, NOTE._,  NOTE._,  NOTE._
+    ];
+
+    var bgmBass = [
+      // Bar 1 (C)
+      NOTE.C3, NOTE._,  NOTE.C3, NOTE._,  NOTE.G3, NOTE._,  NOTE.C4, NOTE._,
+      NOTE.E3, NOTE._,  NOTE.G3, NOTE._,  NOTE.C3, NOTE._,  NOTE.G3, NOTE._,
+      // Bar 2 (Am)
+      NOTE.A2, NOTE._,  NOTE.A2, NOTE._,  NOTE.E3, NOTE._,  NOTE.A3, NOTE._,
+      NOTE.C3, NOTE._,  NOTE.E3, NOTE._,  NOTE.A2, NOTE._,  NOTE.E3, NOTE._,
+      // Bar 3 (F)
+      NOTE.F2, NOTE._,  NOTE.F2, NOTE._,  NOTE.C3, NOTE._,  NOTE.F3, NOTE._,
+      NOTE.A2, NOTE._,  NOTE.C3, NOTE._,  NOTE.F2, NOTE._,  NOTE.C3, NOTE._,
+      // Bar 4 (G)
+      NOTE.G2, NOTE._,  NOTE.G2, NOTE._,  NOTE.D3, NOTE._,  NOTE.G3, NOTE._,
+      NOTE.B2, NOTE._,  NOTE.D3, NOTE._,  NOTE.G2, NOTE._,  NOTE.B2, NOTE._,
+
+      // Bar 5 (C)
+      NOTE.C3, NOTE._,  NOTE.G3, NOTE._,  NOTE.C4, NOTE._,  NOTE.G3, NOTE._,
+      NOTE.C3, NOTE._,  NOTE.E3, NOTE._,  NOTE.G3, NOTE._,  NOTE.C3, NOTE._,
+      // Bar 6 (F)
+      NOTE.F2, NOTE._,  NOTE.C3, NOTE._,  NOTE.F3, NOTE._,  NOTE.C3, NOTE._,
+      NOTE.F2, NOTE._,  NOTE.A2, NOTE._,  NOTE.C3, NOTE._,  NOTE.F2, NOTE._,
+      // Bar 7 (Em-Am)
+      NOTE.E2, NOTE._,  NOTE.B2, NOTE._,  NOTE.E3, NOTE._,  NOTE.B2, NOTE._,
+      NOTE.A2, NOTE._,  NOTE.E3, NOTE._,  NOTE.A3, NOTE._,  NOTE.E3, NOTE._,
+      // Bar 8 (G-C)
+      NOTE.G2, NOTE._,  NOTE.D3, NOTE._,  NOTE.G3, NOTE._,  NOTE.D3, NOTE._,
+      NOTE.C3, NOTE._,  NOTE.G3, NOTE._,  NOTE.C4, NOTE._,  NOTE._,  NOTE._
+    ];
+
+    // Drum sequence (0: rest, 1: kick, 2: snare, 3: hihat)
+    var bgmDrums = [
+      // Bar 1
+      1, 3, 3, 3,  2, 3, 3, 3,  1, 3, 1, 3,  2, 3, 3, 3,
+      // Bar 2
+      1, 3, 3, 3,  2, 3, 3, 3,  1, 3, 1, 3,  2, 3, 3, 3,
+      // Bar 3
+      1, 3, 3, 3,  2, 3, 3, 3,  1, 3, 1, 3,  2, 3, 3, 3,
+      // Bar 4
+      1, 3, 3, 3,  2, 3, 3, 3,  1, 1, 2, 2,  3, 3, 2, 3,
+
+      // Bar 5
+      1, 3, 3, 3,  2, 3, 3, 3,  1, 3, 1, 3,  2, 3, 3, 3,
+      // Bar 6
+      1, 3, 3, 3,  2, 3, 3, 3,  1, 3, 1, 3,  2, 3, 3, 3,
+      // Bar 7
+      1, 3, 3, 3,  2, 3, 3, 3,  1, 3, 1, 3,  2, 3, 3, 3,
+      // Bar 8
+      1, 3, 2, 3,  1, 3, 2, 3,  1, 1, 2, 2,  2, 2, 1, 0
+    ];
+
+    var bgmStep = 0;
+    var bgmNextNoteTime = 0.0;
+    var bgmTempo = 136; // BPM
+    var bgmSecondsPer16th = (60.0 / bgmTempo) / 4.0; // ~0.11s
+
+    function initAudio(){
+      if(!audioCtx){
+        var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if(AudioContextClass){
+          audioCtx = new AudioContextClass();
+          bgmMasterGain = audioCtx.createGain();
+          bgmMasterGain.gain.setValueAtTime(isMutedGlobal ? 0 : 0.45, audioCtx.currentTime);
+          bgmMasterGain.connect(audioCtx.destination);
+          createNoiseBuffer();
+        }
+      }
+      if(audioCtx && audioCtx.state === 'suspended'){
+        audioCtx.resume();
+      }
+    }
+
+    function createNoiseBuffer(){
+      if(!audioCtx || noiseBuffer) return;
+      var bufferSize = audioCtx.sampleRate;
+      noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      var output = noiseBuffer.getChannelData(0);
+      for(var i = 0; i < bufferSize; i++){
+        output[i] = Math.random() * 2 - 1;
+      }
+    }
+
+    function playChiptuneTone(freq, time, duration, type, vol){
+      if(!audioCtx || isMutedGlobal) return;
+      try{
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = type || 'square';
+        osc.frequency.setValueAtTime(freq, time);
+
+        gain.gain.setValueAtTime(0.0001, time);
+        gain.gain.linearRampToValueAtTime(vol, time + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+        osc.connect(gain);
+        gain.connect(bgmMasterGain);
+
+        osc.start(time);
+        osc.stop(time + duration);
+      }catch(e){}
+    }
+
+    function playChiptuneKick(time){
+      if(!audioCtx || isMutedGlobal) return;
+      try{
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(130, time);
+        osc.frequency.exponentialRampToValueAtTime(32, time + 0.08);
+
+        gain.gain.setValueAtTime(0.18, time);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.08);
+
+        osc.connect(gain);
+        gain.connect(bgmMasterGain);
+
+        osc.start(time);
+        osc.stop(time + 0.08);
+      }catch(e){}
+    }
+
+    function playChiptuneSnare(time){
+      if(!audioCtx || !noiseBuffer || isMutedGlobal) return;
+      try{
+        var noise = audioCtx.createBufferSource();
+        noise.buffer = noiseBuffer;
+
+        var filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1600, time);
+        filter.Q.setValueAtTime(1.2, time);
+
+        var gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.08, time);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.09);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(bgmMasterGain);
+
+        noise.start(time);
+        noise.stop(time + 0.09);
+      }catch(e){}
+    }
+
+    function playChiptuneHihat(time){
+      if(!audioCtx || !noiseBuffer || isMutedGlobal) return;
+      try{
+        var noise = audioCtx.createBufferSource();
+        noise.buffer = noiseBuffer;
+
+        var filter = audioCtx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(6500, time);
+
+        var gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.035, time);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.03);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(bgmMasterGain);
+
+        noise.start(time);
+        noise.stop(time + 0.03);
+      }catch(e){}
+    }
+
+    function bgmScheduler(){
+      if(!audioCtx) return;
+      var scheduleAheadTime = 0.15;
+      while(bgmNextNoteTime < audioCtx.currentTime + scheduleAheadTime){
+        if(!isMutedGlobal){
+          var m = bgmMelody[bgmStep];
+          if(m > 0) playChiptuneTone(m, bgmNextNoteTime, bgmSecondsPer16th * 1.5, 'square', 0.08);
+
+          var h = bgmHarmony[bgmStep];
+          if(h > 0) playChiptuneTone(h, bgmNextNoteTime, bgmSecondsPer16th * 1.2, 'square', 0.035);
+
+          var b = bgmBass[bgmStep];
+          if(b > 0) playChiptuneTone(b, bgmNextNoteTime, bgmSecondsPer16th * 1.8, 'triangle', 0.12);
+
+          var d = bgmDrums[bgmStep];
+          if(d === 1) playChiptuneKick(bgmNextNoteTime);
+          else if(d === 2) playChiptuneSnare(bgmNextNoteTime);
+          else if(d === 3) playChiptuneHihat(bgmNextNoteTime);
+        }
+
+        bgmNextNoteTime += bgmSecondsPer16th;
+        bgmStep = (bgmStep + 1) % 128;
+      }
+      bgmTimerID = setTimeout(bgmScheduler, 25);
+    }
+
+    function startPixelBGM(){
+      initAudio();
+      if(isBGMRunning) return;
+      if(!audioCtx) return;
+      isBGMRunning = true;
+      bgmNextNoteTime = audioCtx.currentTime + 0.05;
+      bgmStep = 0;
+      bgmScheduler();
+      updateAllAudioButtons();
+    }
+
+    function updateAllAudioButtons(){
+      var icon = isMutedGlobal ? '🔇' : '🔊';
+      var statusText = isMutedGlobal ? 'BGM: OFF' : 'BGM: ON';
+      var statusColor = isMutedGlobal ? 'text-red-400' : 'text-emerald-300';
+
+      var audioIcon = document.getElementById('audio-icon');
+      if(audioIcon) audioIcon.textContent = icon;
+      var bgmStatus = document.getElementById('global-bgm-status');
+      if(bgmStatus){
+        bgmStatus.textContent = statusText;
+        bgmStatus.className = 'text-[9px] font-mono hidden sm:inline ' + statusColor;
+      }
+      var g1Btn = document.getElementById('g1-mute-button');
+      if(g1Btn) g1Btn.textContent = icon;
+      var g2Btn = document.getElementById('g2-mute-button');
+      if(g2Btn) g2Btn.textContent = icon;
+      var g3Btn = document.getElementById('g3-audio-toggle-btn');
+      if(g3Btn) g3Btn.textContent = icon;
+    }
+
+    function toggleGlobalAudio(){
+      isMutedGlobal = !isMutedGlobal;
+      initAudio();
+      if(bgmMasterGain && audioCtx){
+        bgmMasterGain.gain.setValueAtTime(isMutedGlobal ? 0 : 0.45, audioCtx.currentTime);
+      }
+      if(!isMutedGlobal && !isBGMRunning){
+        startPixelBGM();
+      }
+      if(!isMutedGlobal){
+        playSynthBeep(880, 0.1);
+      }
+      updateAllAudioButtons();
+    }
+
+    function playSynthBeep(freq, duration, type){
+      if(isMutedGlobal) return;
+      initAudio();
+      if(!audioCtx) return;
+      try{
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = type || 'square';
+        osc.frequency.setValueAtTime(freq||440, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (duration||0.12));
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + (duration||0.12));
+      }catch(e){ console.log('Audio error',e); }
+    }
+
+    function playSuccessJingle(){
+      if(isMutedGlobal) return;
+      playSynthBeep(523.25,0.1,'square'); setTimeout(()=>playSynthBeep(659.25,0.1,'square'),100); setTimeout(()=>playSynthBeep(783.99,0.18,'square'),200);
+    }
+
+    function playCyberJingle(){
+      if(isMutedGlobal) return;
+      playSynthBeep(440,0.08,'sawtooth');
+      setTimeout(()=>playSynthBeep(659.25,0.08,'sawtooth'),80);
+      setTimeout(()=>playSynthBeep(880,0.12,'square'),160);
+      setTimeout(()=>playSynthBeep(1174.66,0.22,'sine'),240);
+    }
+
+    // Auto-start BGM when web is accessed, with seamless gesture fallback
+    function tryAutoStartBGM(){
+      initAudio();
+      if(audioCtx && audioCtx.state === 'running'){
+        startPixelBGM();
+      } else {
+        var startOnFirstGesture = function(){
+          initAudio();
+          if(audioCtx && audioCtx.state === 'suspended'){
+            audioCtx.resume().then(function(){
+              if(!isMutedGlobal) startPixelBGM();
+            });
+          } else {
+            if(!isMutedGlobal) startPixelBGM();
+          }
+          window.removeEventListener('click', startOnFirstGesture);
+          window.removeEventListener('touchstart', startOnFirstGesture);
+          window.removeEventListener('keydown', startOnFirstGesture);
+          window.removeEventListener('pointerdown', startOnFirstGesture);
+        };
+        window.addEventListener('click', startOnFirstGesture, { once: true, passive: true });
+        window.addEventListener('touchstart', startOnFirstGesture, { once: true, passive: true });
+        window.addEventListener('keydown', startOnFirstGesture, { once: true, passive: true });
+        window.addEventListener('pointerdown', startOnFirstGesture, { once: true, passive: true });
+      }
+    }
+    tryAutoStartBGM();
+    window.addEventListener('DOMContentLoaded', tryAutoStartBGM);
+    window.addEventListener('load', tryAutoStartBGM);
+
+    /* ===========================
+       STAGE NAVIGATION (CLEAN ISOLATION)
+       =========================== */
+    function openStageInfo(stage){
+      if(stage===1){
+        alert('Stage 1: School Adventure — 10 kata, tingkat mudah. Klik MAIN STAGE 1 untuk mulai.');
+      } else if(stage===2){
+        alert('Stage 2: After School Adventure — 10 kata, tingkat menengah. Klik MAIN STAGE 2 untuk mulai.');
+      } else if(stage===3){
+        alert('Stage 3: Cyberpunk City — Ditenagai Google Gemini 3.8 Flash! 5 kosakata baru dibuat secara dinamis dan unik setiap kali Anda bermain.');
+      }
+    }
+
+    function openGame(n){
+      initAudio();
+      if(!isMutedGlobal && !isBGMRunning) startPixelBGM();
+
+      // Sembunyikan landing screen
+      document.getElementById('landing-screen').classList.add('hidden');
+
+      // Pastikan semua container game tertutup dulu
+      document.getElementById('g1-container').classList.add('hidden');
+      document.getElementById('g2-container').classList.add('hidden');
+      document.getElementById('g3-container').classList.add('hidden');
+
+      if(n===1){
+        document.getElementById('g1-container').classList.remove('hidden');
+        showG1Screen('welcome');
+      } else if(n===2){
+        document.getElementById('g2-container').classList.remove('hidden');
+        showG2Screen('welcome');
+      } else if(n===3){
+        document.getElementById('g3-container').classList.remove('hidden');
+        if(window.showG3Screen) window.showG3Screen('welcome');
+        playCyberJingle();
+      }
+    }
+
+    function closeGame(){
+      // Tutup semua container game dan tampilkan landing screen kembali
+      document.getElementById('g1-container').classList.add('hidden');
+      document.getElementById('g2-container').classList.add('hidden');
+      document.getElementById('g3-container').classList.add('hidden');
+      document.getElementById('landing-screen').classList.remove('hidden');
+    }
+
+    /* ===========================
+       GAME 1 LOGIC
+       =========================== */
+    (function(){
+      const scenarios = [
+        { location:"Kantin Sekolah", emoji:"🥤", caption:"Waktunya minum setelah olahraga!", character:"Maya", avatar:"👧", dialog:"I'm very thirsty after PE. How do I ask for (segelas air) in English?", answers:["A glass of water","A bowl of rice","A new pencil"], correct:0, feedback:"Hebat! Maya ingin meminta segelas air.", vocab:"A glass of water", meaning:"Segelas air" },
+        { location:"Perpustakaan", emoji:"📚", caption:"Buku-buku seru menunggu dibaca.", character:"Rafi", avatar:"👦", dialog:"I left my book at home. Can I (meminjam) one of your storybooks?", answers:["Borrow","Sleep","Dance"], correct:0, feedback:"Benar! Rafi ingin meminjam sebuah buku.", vocab:"Borrow", meaning:"Meminjam" },
+        { location:"Ruang Kelas", emoji:"✏️", caption:"Bel sekolah hampir berbunyi.", character:"Lina", avatar:"👧", dialog:"Our teacher asked us to finish our (pekerjaan rumah) before tomorrow. Which English word fits?", answers:["Breakfast","Homework","Holiday"], correct:1, feedback:"Tepat sekali! Tugas yang dikerjakan di rumah disebut homework.", vocab:"Homework", meaning:"Pekerjaan rumah" },
+        { location:"Koridor Sekolah", emoji:"🧹", caption:"Koridor harus tetap bersih dan nyaman.", character:"Dito", avatar:"👦", dialog:"Dry leaves are on the floor. I will (menyapu) them with a broom. Which English word fits?", answers:["Sweep","Sing","Read"], correct:0, feedback:"Bagus! Sweep berarti menyapu.", vocab:"Sweep", meaning:"Menyapu" },
+        { location:"Lapangan Sekolah", emoji:"⚽", caption:"Ayo bermain bola bersama teman!", character:"Nina", avatar:"👧", dialog:"The ball is coming my way! I need to (menangkap) it with both hands. Which English word fits?", answers:["Throw","Catch","Kick"], correct:1, feedback:"Yeay! Catch berarti menangkap.", vocab:"Catch", meaning:"Menangkap" },
+        { location:"Kelas Seni", emoji:"🎨", caption:"Warna-warni membuat hari semakin ceria.", character:"Bima", avatar:"👦", dialog:"I'm using crayons to (menggambar) a house, a tree, and the sun. Which English word fits?", answers:["Draw","Swim","Jump"], correct:0, feedback:"Keren! Draw berarti menggambar.", vocab:"Draw", meaning:"Menggambar" },
+        { location:"Kantin Sekolah", emoji:"🥣", caption:"Sarapan hangat membuatmu siap belajar.", character:"Sasa", avatar:"👧", dialog:"My breakfast is warm and soft. I eat (bubur) before class. Which English word fits?", answers:["Porridge","Sandwich","Juice"], correct:0, feedback:"Benar! Porridge berarti bubur.", vocab:"Porridge", meaning:"Bubur" },
+        { location:"Gudang Sekolah", emoji:"📦", caption:"Kerja sama membuat tugas berat lebih mudah.", character:"Ari", avatar:"👦", dialog:"This box of books is very (berat). Please help me carry it! Which English word fits?", answers:["Light","Heavy","Tiny"], correct:1, feedback:"Tepat! Heavy berarti berat.", vocab:"Heavy", meaning:"Berat" },
+        { location:"Halaman Sekolah", emoji:"💧", caption:"Hujan kecil membuat halaman berkilau.", character:"Tia", avatar:"👧", dialog:"My shoes got caught in the rain and are now (basah). Which English word fits?", answers:["Dry","Wet","Warm"], correct:1, feedback:"Betul! Wet berarti basah.", vocab:"Wet", meaning:"Basah" },
+        { location:"Gerbang Sekolah", emoji:"☔", caption:"Langit mendung, jangan lupa perlengkapanmu!", character:"Fajar", avatar:"👦", dialog:"Dark clouds are gathering. I brought an (payung) so I won't get wet. Which English word fits?", answers:["Umbrella","Backpack","Notebook"], correct:0, feedback:"Sempurna! Umbrella berarti payung.", vocab:"Umbrella", meaning:"Payung" }
+      ];
+
+      const welcomeScreen = document.getElementById('g1-welcome');
+      const gameScreen = document.getElementById('g1-game');
+      const endScreen = document.getElementById('g1-end');
+      const answerButtons = Array.from(document.querySelectorAll('.g1-answer-button'));
+      const startButton = document.getElementById('g1-start-button');
+      const playAgainButton = document.getElementById('g1-play-again-button');
+
+      let currentIndex = 0, score = 0, typewriterTimer = null;
+
+      window.showG1Screen = function(name){
+        welcomeScreen.classList.add('hidden-screen');
+        gameScreen.classList.add('hidden-screen');
+        endScreen.classList.add('hidden-screen');
+        if(name==='welcome') welcomeScreen.classList.remove('hidden-screen');
+        if(name==='game') gameScreen.classList.remove('hidden-screen');
+        if(name==='end') endScreen.classList.remove('hidden-screen');
+      };
+
+      function typeDialog(targetId, text){
+        clearInterval(typewriterTimer);
+        const target = document.getElementById(targetId);
+        target.textContent = '';
+        let cursor = 0;
+        typewriterTimer = setInterval(()=>{
+          target.textContent += text.charAt(cursor);
+          cursor++; if(cursor>=text.length) clearInterval(typewriterTimer);
+        },19);
+      }
+
+      function renderScenario(){
+        const item = scenarios[currentIndex];
+        document.getElementById('g1-location-name').textContent = item.location;
+        document.getElementById('g1-scene-emoji').textContent = item.emoji;
+        document.getElementById('g1-scene-caption').textContent = item.caption;
+        document.getElementById('g1-character-avatar').textContent = item.avatar;
+        document.getElementById('g1-character-name').textContent = item.character;
+        document.getElementById('g1-score-value').textContent = score;
+        document.getElementById('g1-progress-text').textContent = (currentIndex+1) + ' / ' + scenarios.length;
+        const percent = Math.round(((currentIndex+1)/scenarios.length)*100);
+        document.getElementById('g1-progress-percent').textContent = percent+'%';
+        document.getElementById('g1-progress-fill').style.width = percent+'%';
+        answerButtons.forEach((button,idx)=>{
+          button.disabled=false;
+          button.querySelector('.answer-copy').textContent = item.answers[idx];
+        });
+        typeDialog('g1-dialog-text', item.dialog);
+      }
+
+      function openFeedback(isCorrect){
+        const item = scenarios[currentIndex];
+        answerButtons.forEach(b=>b.disabled=true);
+        if(isCorrect){
+          playSuccessJingle();
+          score += 10;
+        } else {
+          playSynthBeep(200,0.3,'sawtooth');
+        }
+        var closeX = document.getElementById('modal-vocab-close-btn');
+        if(closeX) closeX.classList.add('hidden');
+
+        const content = document.getElementById('modal-vocab-content');
+        content.innerHTML = '<div class="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">🎉 Hasil</div>' +
+          '<h3 class="pixel-font-title text-base sm:text-xl text-yellow-300 mb-3">'+ (isCorrect ? 'JAWABAN BENAR!' : 'Belum Tepat') +'</h3>' +
+          '<div class="pixel-box bg-slate-900 p-3 mb-4 text-xs text-slate-200 leading-relaxed">' +
+            (isCorrect ? ('<p class="font-bold text-emerald-400 mb-1">'+item.feedback+'</p>') : ('<p class="font-bold text-red-300 mb-1">Jawaban yang tepat: '+item.answers[item.correct]+'</p><p>'+item.feedback+'</p>')) +
+          '</div>' +
+          '<div class="flex gap-2">' +
+            '<button onclick="g1Continue()" class="pixel-btn bg-amber-500 text-black text-xs py-3 w-full font-bold shadow-[0_4px_0_#976b00] hover:brightness-110">LANJUT ➔</button>' +
+          '</div>';
+        document.getElementById('modal-vocab').classList.remove('hidden');
+        document.getElementById('g1-score-value').textContent = score;
+      }
+
+      window.g1Continue = function(){
+        closeModal('modal-vocab');
+        currentIndex++;
+        if(currentIndex < scenarios.length){
+          renderScenario();
+        } else {
+          document.getElementById('g1-final-score-value').textContent = score + ' / ' + (scenarios.length*10);
+          showG1Screen('end');
+        }
+      };
+
+      function chooseAnswer(idx){
+        const correct = idx === scenarios[currentIndex].correct;
+        openFeedback(correct);
+      }
+
+      startButton.addEventListener('click', function(){
+        initAudio(); 
+        if(!isMutedGlobal && !isBGMRunning) startPixelBGM();
+        playSynthBeep(523,0.08,'square');
+        currentIndex=0; score=0;
+        showG1Screen('game'); renderScenario();
+      });
+      playAgainButton.addEventListener('click', function(){
+        initAudio();
+        if(!isMutedGlobal && !isBGMRunning) startPixelBGM();
+        currentIndex=0; score=0; showG1Screen('game'); renderScenario();
+      });
+      answerButtons.forEach(btn=>{
+        btn.addEventListener('click', function(){ chooseAnswer(Number(btn.dataset.answerIndex)); });
+      });
+
+    })();
+
+    /* ===========================
+       GAME 2 LOGIC 
+       =========================== */
+    (function(){
+      const scenarios = [
+        { location:"Halte Bus", emoji:"🚌", caption:"Menunggu bus untuk pulang.", character:"Teman", avatar:"👦", dialog:"The bus is taking so long today. We have to (menunggu) here for another 15 minutes.", answers:["Stop","Wait","Stay"], correct:1, feedback:"'Wait' adalah kata yang tepat untuk 'menunggu'.", vocab:"Wait", meaning:"Menunggu" },
+        { location:"Pintu Depan", emoji:"👟", caption:"Akhirnya sampai di rumah!", character:"Ibu", avatar:"👩", dialog:"Welcome home! Don't forget to (melepas) your shoes before stepping on the clean carpet.", answers:["Take off","Put on","Keep"], correct:0, feedback:"'Take off' adalah phrasal verb yang tepat untuk 'melepas'.", vocab:"Take off", meaning:"Melepas" },
+        { location:"Dapur", emoji:"🍔", caption:"Mencari camilan sore.", character:"Kamu", avatar:"🧑", dialog:"I didn't eat much at recess. I feel so (lapar) right now. Are there any snacks?", answers:["Thirsty","Full","Hungry"], correct:2, feedback:"'Hungry' adalah kata sifat yang tepat untuk 'lapar'.", vocab:"Hungry", meaning:"Lapar" },
+        { location:"Kamar Tidur", emoji:"👕", caption:"Bersiap untuk santai.", character:"Kamu", avatar:"🧑", dialog:"My school uniform is sweaty. I need to (mengganti) my clothes into something comfortable.", answers:["Wash","Change","Wear"], correct:1, feedback:"'Change' digunakan untuk konteks 'mengganti' pakaian.", vocab:"Change", meaning:"Mengganti" },
+        { location:"Ruang Keluarga", emoji:"🛋️", caption:"Melepas lelah setelah seharian.", character:"Ayah", avatar:"👨", dialog:"You look tired after a long day at school. Go take a (istirahat) on the couch.", answers:["Run","Work","Rest"], correct:2, feedback:"Tepat sekali! 'Rest' berarti 'istirahat'.", vocab:"Rest", meaning:"Istirahat" },
+        { location:"Taman Rumah", emoji:"🌻", caption:"Membantu merawat tanaman.", character:"Ibu", avatar:"👩", dialog:"Can you help me? Please (menyiram) the flowers in the front yard.", answers:["Drink","Water","Wash"], correct:1, feedback:"Sebagai kata kerja, 'Water' berarti 'menyiram'.", vocab:"Water", meaning:"Menyiram" },
+        { location:"Taman Komplek", emoji:"🚲", caption:"Bermain sore bersama teman.", character:"Teman", avatar:"👦", dialog:"The weather is nice this afternoon. Let's (mengendarai) our bicycles around the park!", answers:["Drive","Walk","Ride"], correct:2, feedback:"'Ride' digunakan untuk mengendarai sepeda atau motor.", vocab:"Ride", meaning:"Mengendarai / Naik" },
+        { location:"Kamar Mandi", emoji:"🧼", caption:"Mandi sore agar segar.", character:"Kamu", avatar:"🧑", dialog:"I'm going to take a bath, but I ran out of (sabun) to wash my body.", answers:["Soap","Shampoo","Toothpaste"], correct:0, feedback:"'Soap' adalah kata yang benar untuk 'sabun'.", vocab:"Soap", meaning:"Sabun" },
+        { location:"Ruang Makan", emoji:"😋", caption:"Makan malam bersama keluarga.", character:"Kamu", avatar:"🧑", dialog:"Mom, this fried chicken is so (sangat enak)! Can I have some more?", answers:["Delicious","Spicy","Salty"], correct:0, feedback:"'Delicious' berarti 'sangat enak' atau lezat.", vocab:"Delicious", meaning:"Sangat Enak / Lezat" },
+        { location:"Kamar Tidur", emoji:"🎒", caption:"Persiapan untuk esok hari.", character:"Kamu", avatar:"🧑", dialog:"Before going to sleep, I must (menyiapkan) my books and uniform for tomorrow.", answers:["Forget","Throw","Prepare"], correct:2, feedback:"'Prepare' berarti menyiapkan.", vocab:"Prepare", meaning:"Menyapkan" }
+      ];
+
+      const welcomeScreen = document.getElementById('g2-welcome');
+      const gameScreen = document.getElementById('g2-game');
+      const endScreen = document.getElementById('g2-end');
+      const answerButtons = Array.from(document.querySelectorAll('.g2-answer-button'));
+      const startButton = document.getElementById('g2-start-button');
+      const playAgainButton = document.getElementById('g2-play-again-button');
+      const muteButton = document.getElementById('g2-mute-button');
+
+      let currentIndex = 0, score = 0, typewriterTimer = null;
+      let isMutedG2 = false;
+
+      window.showG2Screen = function(name){
+        welcomeScreen.classList.add('hidden-screen');
+        gameScreen.classList.add('hidden-screen');
+        endScreen.classList.add('hidden-screen');
+        if(name==='welcome') welcomeScreen.classList.remove('hidden-screen');
+        if(name==='game') gameScreen.classList.remove('hidden-screen');
+        if(name==='end') endScreen.classList.remove('hidden-screen');
+      };
+
+      function typeDialog(targetId, text){
+        clearInterval(typewriterTimer);
+        const target = document.getElementById(targetId);
+        target.textContent = '';
+        let cursor = 0;
+        typewriterTimer = setInterval(()=>{
+          target.textContent += text.charAt(cursor);
+          cursor++; if(cursor>=text.length) clearInterval(typewriterTimer);
+        },19);
+      }
+
+      function renderScenario(){
+        const item = scenarios[currentIndex];
+        document.getElementById('g2-location-name').textContent = item.location;
+        document.getElementById('g2-scene-emoji').textContent = item.emoji;
+        document.getElementById('g2-scene-caption').textContent = item.caption;
+        document.getElementById('g2-character-avatar').textContent = item.avatar;
+        document.getElementById('g2-character-name').textContent = item.character;
+        document.getElementById('g2-score-value').textContent = score;
+        document.getElementById('g2-progress-text').textContent = (currentIndex+1)+' / '+scenarios.length;
+        const percent = Math.round(((currentIndex+1)/scenarios.length)*100);
+        document.getElementById('g2-progress-percent').textContent = percent+'%';
+        document.getElementById('g2-progress-fill').style.width = percent+'%';
+        answerButtons.forEach((button,idx)=>{
+          button.disabled=false;
+          button.querySelector('.answer-copy').textContent = item.answers[idx];
+        });
+        typeDialog('g2-dialog-text', item.dialog);
+      }
+
+      function openFeedback(isCorrect){
+        const item = scenarios[currentIndex];
+        answerButtons.forEach(b=>b.disabled=true);
+        if(isCorrect){ playSuccessJingle(); score+=10; } else { playSynthBeep(220,0.18,'sawtooth'); }
+        var closeX = document.getElementById('modal-vocab-close-btn');
+        if(closeX) closeX.classList.add('hidden');
+
+        const content = document.getElementById('modal-vocab-content');
+        content.innerHTML = '<div class="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">🎉 Hasil</div>' +
+          '<h3 class="pixel-font-title text-base sm:text-xl text-yellow-300 mb-3">'+(isCorrect?'JAWABAN BENAR!':'Belum Tepat')+'</h3>' +
+          '<div class="pixel-box bg-slate-900 p-3 mb-4 text-xs text-slate-200 leading-relaxed">'+
+            (isCorrect?('<p class="font-bold text-emerald-400 mb-1">'+item.feedback+'</p>'):(`<p class="font-bold text-red-300 mb-1">Jawaban yang tepat: ${item.answers[item.correct]}</p><p>${item.feedback}</p>`)) +
+          '</div>' +
+          '<div class="flex gap-2">' +
+            '<button onclick="g2Continue()" class="pixel-btn bg-amber-500 text-black text-xs py-3 w-full font-bold shadow-[0_4px_0_#976b00] hover:brightness-110">LANJUT ➔</button>' +
+          '</div>';
+        document.getElementById('modal-vocab').classList.remove('hidden');
+        document.getElementById('g2-score-value').textContent = score;
+      }
+
+      window.g2Continue = function(){
+        closeModal('modal-vocab');
+        currentIndex++;
+        if(currentIndex < scenarios.length){
+          renderScenario();
+        } else {
+          document.getElementById('g2-final-score-value').textContent = score + ' / ' + (scenarios.length*10);
+          showG2Screen('end');
+        }
+      };
+
+      function chooseAnswer(idx){
+        const correct = idx === scenarios[currentIndex].correct;
+        openFeedback(correct);
+      }
+
+      startButton.addEventListener('click', function(){
+        initAudio(); 
+        if(!isMutedGlobal && !isBGMRunning) startPixelBGM();
+        playSynthBeep(523,0.08,'square');
+        currentIndex=0; score=0; showG2Screen('game'); renderScenario();
+      });
+      playAgainButton.addEventListener('click', function(){
+        initAudio(); 
+        if(!isMutedGlobal && !isBGMRunning) startPixelBGM();
+        currentIndex=0; score=0; showG2Screen('game'); renderScenario();
+      });
+      answerButtons.forEach(btn=>{
+        btn.addEventListener('click', function(){ chooseAnswer(Number(btn.dataset.answerIndex)); });
+      });
+      muteButton.addEventListener('click', function(){
+        toggleGlobalAudio();
+      });
+
+    })();
+
+    /* =========================================================
+       STAGE 3: CYBERPUNK CITY AI VOCABULARY ENGINE
+       - API Calls dialihkan ke /api/gemini (Vercel Serverless Function)
+       - Kunci API tidak lagi diekspos di client-side HTML
+       ========================================================= */
+    (function(){
+      const offlineCyberPool = [
+        { location:"Cyber District 9", emoji:"🦾", caption:"Lampu neon berkedip di lorong pasar gelap cyborg.", character:"Jax (Cyborg)", avatar:"🦹", dialog:"My mechanical arm is damaged. Can you help me (memperbaiki) it before the enforcers arrive?", answers:["Repair","Destroy","Ignore"], correct:0, feedback:"Benar! 'Repair' berarti memperbaiki.", vocab:"Repair", meaning:"Memperbaiki" },
+        { location:"Aero-Highway Skyway", emoji:"🛸", caption:"Mobil terbang melesat kencang di antara gedung tinggi.", character:"Vex (Hovercar Pilot)", avatar:"🧑‍✈️", dialog:"Hold on tight! The police hovercrafts are trying to (mengejar) us!", answers:["Chase","Escape","Bribe"], correct:0, feedback:"Tepat! 'Chase' berarti mengejar.", vocab:"Chase", meaning:"Mengejar" },
+        { location:"Megacorp Mainframe", emoji:"💾", caption:"Ruang server raksasa yang dijaga ketat oleh firewall.", character:"Nyx (Netrunner)", avatar:"👩‍💻", dialog:"I need to (meretas) this terminal to download the encrypted blueprints.", answers:["Block","Hack","Delete"], correct:1, feedback:"Keren! 'Hack' berarti meretas.", vocab:"Hack", meaning:"Meretas" },
+        { location:"Rooftop Drone Hub", emoji:"🛰️", caption:"Ratusan drone pemindai berpatroli membelah kabut kota.", character:"Unit-7 (Rebel Synth)", avatar:"🤖", dialog:"Warning! The security scanner will (mendeteksi) any unauthorized cyberware.", answers:["Protect","Detect","Forget"], correct:1, feedback:"Mantap! 'Detect' berarti mendeteksi.", vocab:"Detect", meaning:"Mendeteksi" },
+        { location:"Underground Power Grid", emoji:"⚡", caption:"Kabel daya bawah tanah memancarkan percikan plasma biru.", character:"Doc Kuro (Bio-Engineer)", avatar:"👨‍🔬", dialog:"Our emergency generator is completely (kosong). We need a new fusion core.", answers:["Empty","Heavy","Bright"], correct:0, feedback:"Bagus! 'Empty' berarti kosong.", vocab:"Empty", meaning:"Kosong" },
+        { location:"Neon Alley 2077", emoji:"🌃", caption:"Lampu neon biru dan merah menyinari gang sempit.", character:"Kira (Netrunner)", avatar:"👩‍💻", dialog:"The drones are tracking my location. I need to find a place to (bersembunyi) before they scan me.", answers:["Hide","Dance","Cook"], correct:0, feedback:"Bagus! 'Hide' berarti bersembunyi.", vocab:"Hide", meaning:"Bersembunyi" }
+      ];
+
+      const welcomeScreen = document.getElementById('g3-welcome');
+      const loadingScreen = document.getElementById('g3-loading');
+      const gameScreen = document.getElementById('g3-game');
+      const endScreen = document.getElementById('g3-end');
+      const answerButtons = Array.from(document.querySelectorAll('.g3-answer-button'));
+      const startButton = document.getElementById('g3-start-button');
+      const playAgainButton = document.getElementById('g3-play-again-button');
+
+      let currentQuestions = [];
+      let currentIndex = 0, score = 0, typewriterTimer = null;
+
+      window.showG3Screen = function(name){
+        welcomeScreen.classList.add('hidden-screen');
+        loadingScreen.classList.add('hidden-screen');
+        gameScreen.classList.add('hidden-screen');
+        endScreen.classList.add('hidden-screen');
+        if(name==='welcome') welcomeScreen.classList.remove('hidden-screen');
+        if(name==='loading') loadingScreen.classList.remove('hidden-screen');
+        if(name==='game') gameScreen.classList.remove('hidden-screen');
+        if(name==='end') endScreen.classList.remove('hidden-screen');
+      };
+
+      function typeDialog(targetId, text){
+        clearInterval(typewriterTimer);
+        const target = document.getElementById(targetId);
+        target.textContent = '';
+        let cursor = 0;
+        typewriterTimer = setInterval(()=>{
+          target.textContent += text.charAt(cursor);
+          if(cursor % 4 === 0) playSynthBeep(980, 0.02, 'sine');
+          cursor++; 
+          if(cursor>=text.length) clearInterval(typewriterTimer);
+        }, 16);
+      }
+
+      async function generateQuestionsWithGemini(){
+        const prompt = `Anda adalah AI game engine untuk game edukasi vocabulary Bahasa Inggris bertema Cyberpunk City (futuristik, neon, cyborg, netrunner, drone, mobil terbang, teknologi masa depan).
+Hasilkan tepat 5 (lima) soal pilihan ganda vocabulary Bahasa Inggris untuk pemain Indonesia.
+Di dalam teks 'dialog', sertakan petunjuk kata dalam bahasa Indonesia di dalam kurung, contoh: "(mengejar)" atau "(baterai)".
+Pemain harus memilih kata bahasa Inggris yang tepat dari 3 pilihan jawaban.
+
+Balas HANYA dengan JSON valid berupa Array of 5 Objects:
+[
+  {
+    "location": "Nama lokasi cyberpunk (contoh: 'Neon Alley Sector 7', 'Sky-Deck Cyber Bar', 'Data Core Sanctuary')",
+    "emoji": "Satu emoji cyberpunk (contoh: 🤖, 🛸, 🏙️, ⚡, 🦾, 🥽, 💾, 🛰️, 🏍️, 🌃, 🔋)",
+    "caption": "Deskripsi singkat suasana 1 kalimat dalam bahasa Indonesia",
+    "character": "Nama karakter cyberpunk (contoh: 'Zero (Android)', 'Nyx (Netrunner)', 'Cap. Rex (Hover Pilot)')",
+    "avatar": "Satu emoji karakter (contoh: 🤖, 👩‍💻, 🧑‍🚀, 🦹, 🦾, 🧑‍✈️)",
+    "dialog": "Kalimat percakapan bahasa Inggris yang menyisipkan kata kunci bahasa Indonesia dalam kurung, contoh: 'The security bot is approaching! We must (lari) to the escape pod immediately.'",
+    "answers": ["Pilihan A", "Pilihan B", "Pilihan C"],
+    "correct": 0,
+    "feedback": "Penjelasan singkat edukatif dalam bahasa Indonesia jika pemain menjawab",
+    "vocab": "Kata bahasa Inggris yang benar",
+    "meaning": "Arti kata dalam Bahasa Indonesia"
+  }
+]
+Perhatian:
+- 'correct' adalah indeks angka 0, 1, atau 2 yang mengarah ke jawaban yang benar di array 'answers'.
+- Variasikan 5 kata tersebut agar kosakata seru, edukatif, dan kontekstual dengan dunia cyberpunk.
+- Acak indeks 'correct' di antara 0, 1, dan 2.
+- Acak tema dengan seed unik: ${Date.now()}`;
+
+        // Memanggil backend lokal (Vercel Serverless Function) 
+        // BUKAN memanggil URL Google secara langsung
+        const url = `/api/gemini`;
+        
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.95,
+              responseMimeType: "application/json"
+            }
+          })
+        });
+
+        if(!response.ok){
+          const errBody = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errBody}`);
+        }
+
+        const data = await response.json();
+        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if(!rawText) throw new Error("Format respons Gemini kosong");
+
+        let cleaned = rawText.trim();
+        if(cleaned.startsWith('```')){
+          cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+        }
+
+        const parsed = JSON.parse(cleaned);
+        if(Array.isArray(parsed) && parsed.length >= 5){
+          return parsed.slice(0, 5);
+        }
+        throw new Error("Data soal dari Gemini tidak lengkap");
+      }
+
+      function getOfflineQuestions(){
+        const shuffled = [...offlineCyberPool].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 5);
+      }
+
+      async function prepareAndStartCyberGame(){
+        showG3Screen('loading');
+        playSynthBeep(659.25, 0.1, 'sine');
+
+        document.getElementById('g3-loading-status').textContent = 'Menghubungkan ke Gemini 3.8 Flash untuk 5 soal baru...';
+        try{
+          const aiQuestions = await generateQuestionsWithGemini();
+          currentQuestions = aiQuestions;
+          playCyberJingle();
+        } catch(err){
+          console.warn("Gemini Error, menggunakan cadangan:", err);
+          currentQuestions = getOfflineQuestions();
+        }
+
+        currentIndex = 0;
+        score = 0;
+        showG3Screen('game');
+        renderScenario();
+      }
+
+      function renderScenario(){
+        const item = currentQuestions[currentIndex];
+        document.getElementById('g3-location-name').textContent = item.location || "CYBER DISTRICT";
+        document.getElementById('g3-scene-emoji').textContent = item.emoji || "🤖";
+        document.getElementById('g3-scene-caption').textContent = item.caption || "Kota neon masa depan.";
+        document.getElementById('g3-character-avatar').textContent = item.avatar || "🤖";
+        document.getElementById('g3-character-name').textContent = item.character || "Cyber Operator";
+        document.getElementById('g3-score-value').textContent = score;
+        document.getElementById('g3-progress-text').textContent = (currentIndex+1) + ' / ' + currentQuestions.length;
+        
+        const percent = Math.round(((currentIndex+1)/currentQuestions.length)*100);
+        document.getElementById('g3-progress-percent').textContent = percent + '%';
+        document.getElementById('g3-progress-fill').style.width = percent + '%';
+
+        answerButtons.forEach((btn, idx)=>{
+          btn.disabled = false;
+          const copy = btn.querySelector('.answer-copy');
+          copy.textContent = item.answers[idx] || "-";
+        });
+
+        typeDialog('g3-dialog-text', item.dialog);
+      }
+
+      function chooseAnswer(idx){
+        const item = currentQuestions[currentIndex];
+        const isCorrect = idx === item.correct;
+        answerButtons.forEach(b => b.disabled = true);
+
+        if(isCorrect){
+          playSuccessJingle();
+          score += 10;
+        } else {
+          playSynthBeep(180, 0.25, 'sawtooth');
+        }
+
+        var closeX = document.getElementById('modal-vocab-close-btn');
+        if(closeX) closeX.classList.add('hidden');
+
+        const content = document.getElementById('modal-vocab-content');
+        content.innerHTML = `
+          <div class="text-xs text-cyan-400 font-bold uppercase tracking-wider mb-1 font-mono">[NEURAL VERIFICATION]</div>
+          <h3 class="cyber-font-tech text-base sm:text-xl font-bold mb-3 ${isCorrect ? 'text-emerald-400 cyber-neon-text-cyan' : 'text-pink-400 cyber-neon-text-pink'}">
+            ${isCorrect ? '⚡ JAWABAN TEPAT!' : '⚠️ BELUM TEPAT'}
+          </h3>
+          <div class="cyber-card p-3 mb-4 text-xs text-slate-200 leading-relaxed font-mono">
+            ${isCorrect 
+              ? `<p class="font-bold text-emerald-300 mb-1">✓ ${item.feedback}</p>` 
+              : `<p class="font-bold text-pink-300 mb-1">Jawaban yang benar: <span class="text-yellow-300">${item.answers[item.correct]}</span></p><p>${item.feedback}</p>`
+            }
+            <div class="mt-2 pt-2 border-t border-cyan-500/30 text-[11px] text-cyan-300">
+              Kosakata: <span class="text-yellow-300 font-bold">${item.vocab || item.answers[item.correct]}</span> (${item.meaning || 'Arti kata'})
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="g3Continue()" class="pixel-btn bg-gradient-to-r from-cyan-400 to-pink-500 text-black text-xs py-3 w-full font-bold shadow-[0_0_15px_rgba(0,240,255,0.4)] hover:brightness-110">LANJUTKAN MISI ➔</button>
+          </div>
+        `;
+        openModal('modal-vocab');
+        document.getElementById('g3-score-value').textContent = score;
+      }
+
+      window.g3Continue = function(){
+        closeModal('modal-vocab');
+        currentIndex++;
+        if(currentIndex < currentQuestions.length){
+          renderScenario();
+        } else {
+          finishCyberGame();
+        }
+      };
+
+      function finishCyberGame(){
+        playCyberJingle();
+        document.getElementById('g3-final-score-value').textContent = score + ' / ' + (currentQuestions.length * 10);
+        
+        const summaryList = document.getElementById('g3-vocab-summary-list');
+        summaryList.innerHTML = '';
+        currentQuestions.forEach(item => {
+          const pill = document.createElement('div');
+          pill.className = 'cyber-card p-2.5 rounded-lg border border-cyan-500/30 flex items-center justify-between';
+          pill.innerHTML = `
+            <div>
+              <span class="text-yellow-300 font-bold">${item.vocab || item.answers[item.correct]}</span>
+              <span class="text-slate-400 mx-1.5">•</span>
+              <span class="text-slate-200">${item.meaning || '-'}</span>
+            </div>
+            <button onclick="speakWord('${item.vocab || item.answers[item.correct]}')" class="text-xs text-cyan-400 hover:text-white px-1.5 py-0.5 rounded bg-cyan-950/80" title="Dengarkan Pengucapan">🔊</button>
+          `;
+          summaryList.appendChild(pill);
+        });
+
+        showG3Screen('end');
+      }
+
+      startButton.addEventListener('click', function(){
+        initAudio();
+        if(!isMutedGlobal && !isBGMRunning) startPixelBGM();
+        prepareAndStartCyberGame();
+      });
+
+      playAgainButton.addEventListener('click', function(){
+        initAudio();
+        if(!isMutedGlobal && !isBGMRunning) startPixelBGM();
+        prepareAndStartCyberGame();
+      });
+
+      answerButtons.forEach(btn => {
+        btn.addEventListener('click', function(){
+          chooseAnswer(Number(btn.dataset.answerIndex));
+        });
+      });
+
+    })();
+
+    window.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        closeModal('modal-vocab');
+        closeModal('modal-help');
+        closeModal('modal-unavailable');
+        closeGame();
+      }
+    });
+  </script>
+</body>
+</html>
